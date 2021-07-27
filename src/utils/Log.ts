@@ -1,5 +1,5 @@
-import chalk from "chalk";
-import Datestamp from "./Datestamp";
+import chalk from 'chalk';
+import Datestamp from './Datestamp';
 
 export default class Log {
     static info(message: any = '', ...optionalParams: any[]) {

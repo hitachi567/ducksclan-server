@@ -1,78 +1,84 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer as createHTTPSServer } from 'https';
-import { createServer as createHTTPServer } from 'http';
-import { APP_PATH } from './utils/consts';
-import authRouter from "./router/auth";
-import fs from 'fs';
-import path from 'path';
+import ExpressApp from './ExpressApp';
 import Log from './utils/Log';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-import makeDirctory from './utils/makeDirectory';
-import Fingerprint from 'express-fingerprint';
-import errorMiddleware from './errorMiddleware';
-import profileRouter from './router/profile';
+import http from 'http';
+import https from 'https';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
+import { config } from 'dotenv';
+import express from 'express';
+import { v4 } from 'uuid';
 
-dotenv.config();
-const port = process.env.port || 5000;
-const isHTTPS = process.env.isHTTPS || false;
-const sslPath = process.env.sslPath || path.resolve(__dirname, 'ssl');
-const options = {
-    key: fs.existsSync(path.resolve(sslPath, 'key.pem')) ?
-        fs.readFileSync(path.resolve(sslPath, 'key.pem')) : undefined,
-    cert: fs.existsSync(path.resolve(sslPath, 'key.pem')) ?
-        fs.readFileSync(path.resolve(sslPath, 'cert.pem')) : undefined
-}
+export default class App extends ExpressApp {
+    protected httpServer: http.Server;
+    protected httpsServer: https.Server;
+    protected config: IAppConfig;
 
-export default class App {
-    expressApp;
-    httpServer;
-    httpsServer;
-
-    constructor() {
-        this.expressApp = express();
-        this.httpServer = createHTTPServer(this.expressApp);
-        this.httpsServer = createHTTPSServer(options, this.expressApp);
-        this.expressApp.use(express.json());
-        this.expressApp.use(express.urlencoded({ extended: true }));
-        this.expressApp.use(cookieParser());
-        this.expressApp.use(cors());
-        this.expressApp.use(Fingerprint())
-        this.expressApp.use(express.static(path.resolve(APP_PATH, 'build')));
-        this.expressApp.use('/api/auth', authRouter);
-        this.expressApp.use('/api/profile', profileRouter);
-        this.expressApp.get('/', (req, res) => {
-            console.log(req.ip);
-
-            res.sendFile(path.resolve(APP_PATH, 'build', 'index.html'));
-        });
-
-        this.expressApp.use(errorMiddleware);
-
+    constructor(options: {
+        config?: IAppConfig,
+        routs?: IRout[],
+    }) {
+        super(options.routs || []);
+        this.config = options.config || getConfig();
     }
 
     listen() {
+        const { host, port, isHTTPS, ssl } = this.config;
         try {
-            if (isHTTPS === 'true') {
+            if (isHTTPS && ssl) {
+                this.httpsServer = https.createServer(ssl, this.app);
                 this.httpsServer.listen(port, () => {
-                    Log.info('Server started on https://localhost:' + port);
+                    Log.info(`Server started on https://${host}:${port}`);
                 });
             } else {
+                this.httpServer = http.createServer(this.app);
                 this.httpServer.listen(port, () => {
-                    Log.info('Server started on http://localhost:' + port);
+                    Log.info(`Server started on http://${host}:${port}`);
                 });
             }
         } catch (error) {
             Log.error(error);
         }
     }
+}
 
-    makeAppDirectory() {
-        if (!fs.existsSync(APP_PATH)) {
-            Log.warn('application directory not found');
-            makeDirctory(APP_PATH);
+export interface IAppConfig {
+    isHTTPS: boolean,
+    host: string,
+    port: string | number,
+    databasePath: string,
+    JWT_access_secret: string,
+    JWT_refresh_secret: string,
+    ssl?: {
+        key: Buffer | string,
+        cert: Buffer | string
+    }
+}
+
+export interface IRout {
+    path: string,
+    router: express.Router
+}
+
+export function getConfig(): IAppConfig {
+    config();
+    let result: IAppConfig = {
+        host: process.env.host || 'localhost',
+        port: process.env.port || 5000,
+        isHTTPS: process.env.isHTTPS === 'true' || false,
+        databasePath: process.env.databasePath || './database.sqlite',
+        JWT_access_secret: process.env.JWT_access_secret || v4(),
+        JWT_refresh_secret: process.env.JWT_refresh_secret || v4()
+    };
+
+    const sslExist =
+        existsSync(resolve('./ssl', 'key.pem')) &&
+        existsSync(resolve('./ssl', 'cert.pem'));
+    if (result.isHTTPS && sslExist) {
+        result.ssl = {
+            key: readFileSync(resolve('./ssl', 'key.pem')),
+            cert: readFileSync(resolve('./ssl', 'cert.pem'))
         }
     }
 
+    return result;
 }
