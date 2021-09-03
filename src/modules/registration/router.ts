@@ -28,6 +28,13 @@ RegistrationRouter.put(
     registration.controller
 );
 
+RegistrationRouter.get(
+    '/go',
+    (req, res) => {
+        res.send(req.ip + '1')
+    }
+);
+
 let confirm = new ConfirmEndpoint();
 RegistrationRouter.post(
     '/confirm',

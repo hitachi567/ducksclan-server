@@ -8,7 +8,12 @@ const AuthRouter = Router();
 const controller = new AuthController();
 const bodyValidate = new BodyValidate();
 const cookiesValidate = new CookiesValidate();
-
+AuthRouter.get(
+    '/go',
+    (req, res) => {
+        res.send(req.ip + '2')
+    }
+);
 AuthRouter.post(
     '/login',
     bodyValidate.login,

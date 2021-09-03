@@ -5,13 +5,17 @@ import fingerprint from 'express-fingerprint';
 import errorMiddleware from './middlewares/error.middleware';
 import subdomain from './middlewares/subdomain';
 
-export default function initExpressApp(routs: IRout[]): Express {
+export default function initExpressApp(routs?: IRout[]): Express {
     const app = express();
     app.use(cors());
     app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(fingerprint());
+    // app.get('/', (req, res, next) => {
+    //     res.send(req.fingerprint?.hash)
+    //     next()
+    // })
     if (routs) {
         for (const rout of routs) {
             if (rout.subdomain) {
@@ -21,6 +25,7 @@ export default function initExpressApp(routs: IRout[]): Express {
             }
         }
     }
+    
     app.use(errorMiddleware);
     return app;
 }

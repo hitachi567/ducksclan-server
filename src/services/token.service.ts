@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
-import { Connection, getConnection } from 'typeorm';
 import { config } from '..';
-import Token from '../modules/database/entities/Token';
+import Token from '../database/entities/Token';
+import UserDatabase from '../database/user.database';
 
 export default class TokenService {
-    protected connection: Connection = getConnection();
+    protected connection = new UserDatabase()
     private accessSecret: string = config.jwtSecrets.access;
     private refreshSecret: string = config.jwtSecrets.refresh;
 
