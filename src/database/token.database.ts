@@ -1,6 +1,6 @@
 import Database from './Database';
-import { IToken } from './interfaces';
-import { ITokenSave } from './token.interfaces';
+import { IToken } from '../interfaces/database.interfaces';
+import { ITokenSave } from '../interfaces/token.interfaces';
 
 export default class TokenDatabase extends Database {
 
@@ -105,4 +105,5 @@ export default class TokenDatabase extends Database {
     static async init() {
         return new TokenDatabase(await Database.getConnection());
     }
+
 }

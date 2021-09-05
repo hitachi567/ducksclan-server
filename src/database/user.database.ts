@@ -1,6 +1,6 @@
 import Database from './Database';
-import { IUser } from './interfaces';
-import { IUserCreate } from './user.interfaces';
+import { IUser } from '../interfaces/database.interfaces';
+import { IUserCreate } from '../interfaces/user.interfaces';
 
 export default class UserDatabase extends Database {
     get getUser() {
