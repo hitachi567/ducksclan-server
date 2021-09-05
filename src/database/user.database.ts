@@ -1,33 +1,29 @@
 import Database from './Database';
-import User from './entities/User';
-
+import { IUser } from './interfaces';
+import { IUserCreate } from './user.interfaces';
 
 export default class UserDatabase extends Database {
     get getUser() {
         const db = this.db;
 
         function byUsername(username: string) {
-            const sql = 'select id from user where username=@username';
-            const statement = db.prepare<{ username: string }>(sql);
-            return statement.get({ username });
+            const sql = 'select * from user where username=?';
+            return db.get<IUser>(sql, username);
         }
 
         function byEmail(email: string) {
-            const sql = 'select id from user where email=@email';
-            const statement = db.prepare<{ email: string }>(sql);
-            return statement.get({ email });
+            const sql = 'select * from user where email=?';
+            return db.get<IUser>(sql, email);
         }
 
-        function byUsernameAndEmail(username: string, email: string) {    
-            const sql = 'select id from user where username=@username and email=@email';
-            const statement = db.prepare<{ username: string, email: string }>(sql);
-            return statement.get({ username, email });
+        function byUsernameAndEmail(username: string, email: string) {
+            const sql = 'select * from user where username=? and email=?';
+            return db.get<IUser>(sql, username, email);
         }
 
         function byUsernameOrEmail(username: string, email: string) {
-            const sql = 'select id from user where username=@username or email=@email';
-            const statement = db.prepare<{ username: string, email: string }>(sql);
-            return statement.get({ username, email });
+            const sql = 'select * from user where username=? or email=?';
+            return db.get<IUser>(sql, username, email);
         }
 
         return {
@@ -38,27 +34,14 @@ export default class UserDatabase extends Database {
         }
     }
 
-    createUser(data: {
-        id: string,
-        username: string,
-        email: string,
-        password: string
-    }) {
-        const sql = `
-            insert into user (id, username, email, password, create_date)
-            values (@id, @username, @email, @password, @create_date)
-        `;
-        const statement = this.db.prepare<{
-            id: string,
-            username: string,
-            email: string,
-            password: string,
-            create_date: string
-        }>(sql);
-        return statement.run({
-            ...data,
-            create_date: new Date().toISOString()
-        });
+    createUser(user: IUserCreate) {
+        const sql = 'insert into user (id, username, email, password, create_date) values(?, ?, ?, ?, ?)';
+        const data = [user.id, user.username, user.email, user.password, new Date().toISOString()];
+        return this.db.run(sql, data);
+    }
+
+    static async init() {
+        return new UserDatabase(await Database.getConnection());
     }
 
 }

@@ -1,37 +1,32 @@
-import BetterSqlite3 from 'better-sqlite3';
-import ActrivateCode from './entities/ActivateCode';
-import DisabledUser from './entities/DisabledUser';
-import Journal from './entities/Journal';
-import Token from './entities/Token';
-import User from './entities/User';
-import UserOnline from './entities/UserOnline';
-import UserPhoto from './entities/UserPhoto';
+import sqlite, { open } from 'sqlite';
+import sqlite3 from 'sqlite3';
+import getSql from './getSql';
+
+const config = {
+    filename: './database.sqlite',
+    driver: sqlite3.Database
+};
 
 export default class Database {
-    protected readonly db: BetterSqlite3.Database;
-
-    constructor() {
-        this.db = new BetterSqlite3('database.sqlite');
-        const statements: BetterSqlite3.Statement<any[]>[] = [];
-        statements.push(this.db.prepare(User.prepare));
-        statements.push(this.db.prepare(UserOnline.prepare));
-        statements.push(this.db.prepare(UserPhoto.prepare));
-        statements.push(this.db.prepare(DisabledUser.prepare));
-        statements.push(this.db.prepare(ActrivateCode.prepare));
-        statements.push(this.db.prepare(Token.prepare));
-        statements.push(this.db.prepare(Journal.prepare));
-        for (const statement of statements) {
-            statement.run();
-        }
-    }
+    constructor(protected db: sqlite.Database) { }
 
     close() {
         this.db.close();
     }
 
-    static async init() {
-        const db = new Database();
-        db.close();
+    protected static async getConnection() {
+        const db = await open(config);
+        await db.run(getSql('./user.sql'));
+        await db.run(getSql('./user_online.sql'));
+        await db.run(getSql('./user_photo.sql'));
+        await db.run(getSql('./disabled_user.sql'));
+        await db.run(getSql('./activate_code.sql'));
+        await db.run(getSql('./token.sql'));
+        await db.run(getSql('./journal.sql'));
+        return db;
     }
 
+    static async init() {
+        return new Database(await Database.getConnection());
+    }
 }
