@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { config } from '..';
-import Token from '../database/entities/Token';
-import UserDatabase from '../database/user.database';
+import TokenDatabase from '../database/token.database';
+import { ITokenSave } from '../interfaces/token.interfaces';
 
 export default class TokenService {
-    protected connection = new UserDatabase()
+    // protected connection = new UserDatabase()
     private accessSecret: string = config.jwtSecrets.access;
     private refreshSecret: string = config.jwtSecrets.refresh;
 
@@ -31,23 +31,12 @@ export default class TokenService {
         return jwt.verify(token, this.refreshSecret) as TokenPayload;
     }
 
-    async saveToken(data: {
-        user_id: string,
-        token: string,
-        date: Date,
-        fingerprint?: string,
-        ip?: string
-    }) {
-        const token = new Token();
-        token.user_id = data.user_id;
-        token.date = data.date;
-        if (data.fingerprint) {
-            token.fingerprint = data.fingerprint;
-        }
-        if (data.ip) {
-            token.ip = data.ip;
-        }
-        await this.connection.manager.save(token);
+    async saveToken(data: ITokenSave) {
+        const db = await TokenDatabase.init();
+        await db.removeTokens.notRelevant(data.user_id);
+        await db.removeToken.byFingerprint(data.fingerprint);
+        await db.saveToken(data);
+        db.close();
     }
 
 }
