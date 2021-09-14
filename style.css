@@ -1,0 +1,9 @@
+body {
+  min-height: 100%;
+  background: linear-gradient(
+    45deg,
+    hsl(0, 30%, 61%),
+    hsl(235, 37%, 64%),
+    hsl(274, 16%, 36%)
+  );
+}
