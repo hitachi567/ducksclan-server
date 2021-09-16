@@ -49,15 +49,3 @@ export default class Database {
         }
     }
 }
-
-
-
-// (async () => {
-//     const client = await pool.connect()
-//     try {
-//         const res = await client.query<{ date: Date }>('SELECT * FROM current_timestamp as date')
-//         console.log(res.rows[0].date)
-//     } finally {
-//         client.release()
-//     }
-// })().catch(err => console.log(err.stack));

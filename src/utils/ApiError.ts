@@ -38,6 +38,12 @@ export default class ApiError {
         return error;
     }
 
+    static ValidateError(message: string) {
+        let error = ApiError.BadRequest(message);
+        error.type = TypesApiError.validation;
+        return error;
+    }
+
     static handleValidationErrors(errors: ValidationError[]) {
         // getting messages from validation error instance
         let messages: string[] = [];
@@ -59,15 +65,11 @@ export default class ApiError {
         return error;
     }
 
-
-
-    // static handleServerError(error: any) {
-    //     if (error instanceof ApiError) {
-    //         return error;
-    //     } else if (error instanceof Error) {
-    //         return new ApiError('server error', error.message, error.stack, error);
-    //     } else {
-    //         return new ApiError('other error', 'Internal Server Error', undefined, error);
-    //     }
-    // }
+    static handleServerError(error: any) {
+        if (error instanceof ApiError) {
+            return error;
+        } else {
+            return ApiError.InternalServerError();
+        }
+    }
 }

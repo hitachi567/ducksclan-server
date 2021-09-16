@@ -1,26 +1,10 @@
+import UserDatabase from '../database/user.database';
 import ApiError from '../utils/ApiError';
 import BcryptService from './bcrypt.service';
 import TokenService from './token.service';
 import UserService from './user.service';
 
 export default class RegistrationService {
-    protected userService = new UserService();
-    protected bcryptService = new BcryptService();
-    protected tokenService = new TokenService();
-
-    async checkUsername(username: string) {
-        const user = await this.userService.getUser.byUsername(username);
-        if (user) {
-            return ApiError.BadRequest('username is taken');
-        }
-    }
-
-    async checkEmail(email: string) {
-        const user = await this.userService.getUser.byEmail(email);
-        if (user) {
-            return ApiError.BadRequest('email is taken');
-        }
-    }
 
     async registration(
         username: string,
@@ -29,22 +13,16 @@ export default class RegistrationService {
         fingerprint: string,
         ip?: string
     ) {
-        const error = await this.validateNewUser(username, email);
-        if (error) {
-            return error;
-        }
+        await this.validateNewUser(username, email);
 
-        const user_id = this.userService.generateUserId();
-        const hashedPassword = await this.bcryptService.hashingPassword(password);
-        await this.userService.createUser({
-            user_id,
-            username,
-            email,
-            hashedPassword
-        });
+        const userService = new UserService();
+        const user_id = userService.generateUserID();
+        const hashedPassword = await new BcryptService().hashingPassword(password);
+        await userService.create(user_id, username, hashedPassword, email);
 
-        const tokens = this.tokenService.generateTokens({ user_id, fingerprint });
-        await this.tokenService.saveToken({
+        const tokenService = new TokenService();
+        const tokens = tokenService.generateTokens({ user_id, fingerprint });
+        await tokenService.saveToken({
             user_id,
             fingerprint,
             ip,
@@ -64,9 +42,21 @@ export default class RegistrationService {
     }
 
     protected async validateNewUser(username: string, email: string) {
-        const foundedUser = await this.userService.getUser.byUsernameOrEmail(username, email);
-        if (foundedUser) {
-            return ApiError.BadRequest('username or email is taken');
+        const client = await UserDatabase.getInstance();
+        try {
+            const result1 = await client.findOne().byUsername(username);
+
+            console.log(result1);
+            if (result1.rowCount > 0) {
+                throw ApiError.BadRequest('username is taken');
+            }
+
+            const result2 = await client.findOne().byEmail(email);
+            if (result2.rowCount > 0) {
+                throw ApiError.BadRequest('email is taken');
+            }
+        } finally {
+            client.close();
         }
     }
 }

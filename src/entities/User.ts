@@ -18,10 +18,5 @@ export default class User {
         date: Date
     }[]
     
-    static async find(user_id: string) {
-        const db = await UserDatabase.init();
-        db.
-    }
-
 
 }

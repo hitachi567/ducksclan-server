@@ -4,7 +4,6 @@ import TokenDatabase from '../database/token.database';
 import { ITokenSave } from '../interfaces/token.interfaces';
 
 export default class TokenService {
-    // protected connection = new UserDatabase()
     private accessSecret: string = config.jwtSecrets.access;
     private refreshSecret: string = config.jwtSecrets.refresh;
 
@@ -24,7 +23,7 @@ export default class TokenService {
     }
 
     validateAccessToken(token: string) {
-        return jwt.verify(token, this.accessSecret)/*  as TokenPayload */;
+        return jwt.verify(token, this.accessSecret) as TokenPayload;
     }
 
     validateRefreshToken(token: string) {
@@ -32,9 +31,9 @@ export default class TokenService {
     }
 
     async saveToken(data: ITokenSave) {
-        const db = await TokenDatabase.init();
-        await db.removeTokens.notRelevant(data.user_id);
-        await db.removeToken.byFingerprint(data.fingerprint);
+        const db = await TokenDatabase.getInstance();
+        await db.destroyMany().notRelevant(data.user_id);
+        await db.destroyOne().byFingerprint(data.fingerprint);
         await db.saveToken(data);
         db.close();
     }

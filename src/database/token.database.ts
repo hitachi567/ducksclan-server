@@ -1,109 +1,121 @@
-import Database from './Database';
 import { IToken } from '../interfaces/database.interfaces';
 import { ITokenSave } from '../interfaces/token.interfaces';
+import { PoolClient } from 'pg';
+import { database } from '..';
 
-export default class TokenDatabase extends Database {
+export default class TokenDatabase {
+
+    constructor(protected client: PoolClient) { }
+
+    static async getInstance() {
+        return new TokenDatabase(await database.getClient());
+    }
+
+    close() {
+        this.client.release();
+    }
 
     saveToken(data: ITokenSave) {
-        const fields = 'user_id, fingerprint, token, date';
-        let param = [data.user_id, data.fingerprint, data.token, data.date];
+        const { user_id, fingerprint, token, date, ip } = data;
+        let sql = 'insert into token (user_id, fingerprint, token, date';
+        let prm = [user_id, fingerprint, token, date];
 
-        if (data.ip !== undefined) {
-            const sql = 'insert into token (' + fields + ', ip) values (?, ?, ?, ?, ?)';
-            return this.db.run(sql, param, data.ip);
+        if (ip !== undefined) {
+            sql += ', ip) values ($1, $2, $3, $4, $5)';
+            prm.push(ip);
         } else {
-            const sql = 'insert into token (' + fields + ') values (?, ?, ?, ?)';
-            return this.db.run(sql, param);
+            sql += ') values ($1, $2, $3, $4)';
         }
+
+        return this.client.query(sql, prm);
     }
 
-    getAll() {
+    findAll() {
         const sql = 'select * from token';
-        return this.db.all<IToken[]>(sql);
+        return this.client.query(sql);
     }
 
-    get foundToken() {
-        const db = this.db;
+    findOne() {
+        const client = this.client;
 
         function byToken(token: string) {
-            const sql = 'select * from token where token=?';
-            return db.get<IToken>(sql, token);
+            const sql = 'select * from token where token=$1';
+            return client.query<IToken>(sql, [token]);
         }
 
         function byFingerprint(fingerprint: string) {
-            const sql = 'select * from token where fingerprint=?';
-            return db.get<IToken>(sql, fingerprint);
+            const sql = 'select * from token where fingerprint=$1';
+            return client.query<IToken>(sql, [fingerprint]);
         }
 
-        return { byFingerprint, byToken }
+        return {
+            byFingerprint,
+            byToken
+        }
     }
 
-    get foundTokens() {
-        const db = this.db;
+    findMany() {
+        const client = this.client;
 
         function byUserID(user_id: string) {
-            const sql = 'select * from token where user_id=?';
-            return db.all<IToken[]>(sql, user_id);
+            const sql = 'select * from token where user_id=$1';
+            return client.query<IToken[]>(sql, [user_id]);
         }
 
         function byIP(ip: string) {
-            const sql = 'select * from token where ip=?';
-            return db.all<IToken[]>(sql, ip);
+            const sql = 'select * from token where ip=$1';
+            return client.query<IToken[]>(sql, [ip]);
         }
 
         function notRelevant(user_id?: string) {
-            const sql = 'select * from token where date(date, "+30 days")<date("now")';
+            const sql = `select * from token where created_at + '+30 day' < current_timestamp`;
             if (user_id !== undefined) {
-                return db.all<IToken[]>(sql + ' and user_id=?', user_id);
+                return client.query<IToken[]>(sql + ' and user_id=$1', [user_id]);
             }
-            return db.all<IToken[]>(sql);
+            return client.query<IToken[]>(sql);
         }
 
         return { byUserID, byIP, notRelevant }
     }
 
-    get removeToken() {
-        const db = this.db;
+    destroyOne() {
+        const client = this.client;
 
         function byToken(token: string) {
-            const sql = 'delete from token where token=?';
-            return db.run(sql, token);
+            const sql = 'delete from token where token=$1';
+            return client.query(sql, [token]);
         }
 
         function byFingerprint(fingerprint: string) {
-            const sql = 'delete from token where fingerprint=?';
-            return db.run(sql, fingerprint);
+            const sql = 'delete from token where fingerprint=$1';
+            return client.query(sql, [fingerprint]);
         }
 
         return { byFingerprint, byToken }
     }
 
-    get removeTokens() {
-        const db = this.db;
+    destroyMany() {
+        const client = this.client;
 
         function byUserID(user_id: string) {
-            const sql = 'delete from token where user_id=?';
-            return db.run(sql, user_id);
+            const sql = 'delete from token where user_id=$1';
+            return client.query(sql, [user_id]);
         }
 
         function byIP(ip: string) {
-            const sql = 'delete from token where ip=?';
-            return db.run(sql, ip);
+            const sql = 'delete from token where ip=$1';
+            return client.query(sql, [ip]);
         }
 
         function notRelevant(user_id?: string) {
-            const sql = 'delete from token where date(date, "+30 days")<date("now")';
+            const sql = `delete from token where created_at + '+30 day' < current_timestamp`;
             if (user_id !== undefined) {
-                return db.run(sql + ' and user_id=?', user_id);
+                return client.query(sql + ' and user_id=$1', [user_id]);
             }
-            return db.run(sql);
+            return client.query(sql);
         }
 
         return { byUserID, byIP, notRelevant }
-    }
-
-    static async init() {
-        return new TokenDatabase(await Database.getConnection());
     }
 
 }

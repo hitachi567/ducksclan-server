@@ -9,14 +9,14 @@ export default class RegistrationDto {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(5)
-    @MaxLength(20)
+    @MinLength(3)
+    @MaxLength(30)
     username: string;
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(5)
-    @MaxLength(20)
+    @MinLength(3)
+    @MaxLength(50)
     password: string;
 
 }

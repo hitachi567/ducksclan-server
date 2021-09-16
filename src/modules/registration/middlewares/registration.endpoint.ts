@@ -1,40 +1,30 @@
 import { NextFunction, Request, Response } from 'express';
-import { validate } from 'class-validator';
-import RegistrationDto from '../dtos/registration.dto';
-import ApiError from '../../../utils/ApiError';
 import RegistrationService from '../../../services/registration.service';
+import UserService from '../../../services/user.service';
 
 export default class RegistrationEndpoint {
     async validator(request: Request, response: Response, next: NextFunction) {
+        const service = new UserService();
         const { email, username, password } = request.body;
-
-        const dto = new RegistrationDto();
-        dto.email = email;
-        dto.username = username;
-        dto.password = password;
-        const errors = await validate(dto);
-
-        if (errors.length === 0) {
+        try {
+            response.locals.email = service.checkEmail(email);
+            response.locals.username = service.checkUsername(username);
+            response.locals.password = service.checkPassword(password);
             next();
-        } else {
-            const error = ApiError.handleValidationErrors(errors);
+        } catch (error) {
             next(error);
         }
     }
 
     async controller(request: Request, response: Response, next: NextFunction) {
         const service = new RegistrationService();
-
-        const { email, username, password } = request.body;
-        const fingerprint = request.fingerprint ? request.fingerprint.hash : request.ip;
-
-        const result = await service.registration(username, email, password, fingerprint);
-
-        if (result instanceof ApiError) {
-            return next(result);
+        const { username, email, password, fingerprint } = response.locals;
+        
+        try {
+            const result = await service.registration(username, email, password, fingerprint, request.ip);
+            response.status(200).send(result);
+        } catch (error) {
+            next(error);
         }
-
-        response.status(200).send(result);
-        next();
     }
 }
