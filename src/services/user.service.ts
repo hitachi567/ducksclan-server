@@ -13,7 +13,7 @@ export default class UserService {
         const unique = v4();
         return {
             id: unique,
-            username: unique.replace(/-/g, ''),
+            username: unique.replace(/-/g, '').substring(0, 30),
             email: unique.replace(/-/g, '').substring(0, 10) + '@ducksclan.ru',
             password: 'password'
         }
@@ -35,8 +35,6 @@ export default class UserService {
     ) {
         const client = await UserDatabase.getInstance();
         try {
-            console.log(2);
-            
             await client.create({ id, username, password, email });
         } catch (e) {
             

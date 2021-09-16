@@ -17,7 +17,7 @@ export default class TokenDatabase {
 
     saveToken(data: ITokenSave) {
         const { user_id, fingerprint, token, date, ip } = data;
-        let sql = 'insert into token (user_id, fingerprint, token, date';
+        let sql = 'insert into token (user_id, fingerprint, token, created_at';
         let prm = [user_id, fingerprint, token, date];
 
         if (ip !== undefined) {

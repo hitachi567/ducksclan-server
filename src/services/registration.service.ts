@@ -45,8 +45,6 @@ export default class RegistrationService {
         const client = await UserDatabase.getInstance();
         try {
             const result1 = await client.findOne().byUsername(username);
-
-            console.log(result1);
             if (result1.rowCount > 0) {
                 throw ApiError.BadRequest('username is taken');
             }
