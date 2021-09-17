@@ -6,12 +6,13 @@
 
 - node.js
 - npm or yarn
+- postgresql
 
 ## Getting started
 
 ```
-git clone https://github.com/hitachi567/graduation.git
-cd ./graduation/app-server
+git clone https://github.com/hitachi567/ducksclan-server.git server
+cd ./server
 yarn
 
 # for running on production mode
