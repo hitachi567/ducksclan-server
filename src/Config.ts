@@ -6,11 +6,12 @@ import toNumber from './utils/toNumber';
 
 export default class Config {
     readonly port: string | number;
+    readonly subdomainOffset: number;
     readonly ssl?: { key: string, cert: string };
     protected envPath: string;
     protected _jwtAccessSecret: string;
     protected _jwtRefreshSecret: string;
-    pg: {
+    readonly pg: {
         host: string,
         port: number,
         user: string,
@@ -19,16 +20,18 @@ export default class Config {
     };
 
     constructor() {
-        this.envPath = process.env.NODE_ENV === 'production' ? './prod.env' : './dev.env';
+        const isProd = process.env.NODE_ENV === 'production';
+        this.envPath = isProd ? './prod.env' : './dev.env';
         dotenv.config({ path: this.envPath });
 
         this.ssl = this.getSsl();
         this.port = process.env.port || 5000;
+        this.subdomainOffset = toNumber(process.env.subdomainOffset || (isProd ? 2 : 1));
         this._jwtAccessSecret = process.env.jwtAccessSecret || v4();
         this._jwtRefreshSecret = process.env.jwtRefreshSecret || v4();
         this.pg = {
             host: process.env.PGHOST || 'localhost',
-            port: toNumber(process.env.PGPORT || '5432'),
+            port: toNumber(process.env.PGPORT || 5432),
             user: process.env.PGUSER || 'postgres',
             password: process.env.PGPASSWORD || 'root',
             database: process.env.PGDATABASE || 'ducks-database'
@@ -39,12 +42,13 @@ export default class Config {
     rewriteEnvFile() {
         const newEnvFile =
             `port=${this.port}\n` +
+            `subdomainOffset=${this.subdomainOffset}\n` +
             `jwtAccessSecret=${this._jwtAccessSecret}\n` +
             `jwtRefreshSecret=${this._jwtRefreshSecret}\n` +
             `PGUSER=${this.pg.user}\n` +
             `PGPASSWORD=${this.pg.password}\n` +
             `PGDATABASE=${this.pg.database}\n` +
-            `PGHOST=${this.pg.host}\n`;
+            `PGHOST=${this.pg.host}\n` +
             `PGPORT=${this.pg.port}\n`;
         writeFileSync(this.envPath, newEnvFile);
     }

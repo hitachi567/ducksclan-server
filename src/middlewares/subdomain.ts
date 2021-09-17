@@ -1,10 +1,14 @@
 import { TMiddleware } from './TMiddleware';
+import { config } from '..';
 
-export default function subdomain(subdomain: string | null, fn: TMiddleware): TMiddleware {
+export default function subdomain(middleware: TMiddleware, subdomain?: string): TMiddleware {
     return function (request, response, next) {
         const requestedSplit = request.hostname.split('.');
         const expectedSplit = subdomain ? subdomain.split('.') : [];
-        requestedSplit.pop();
+
+        for (let i = 0; i < config.subdomainOffset; i++) {
+            requestedSplit.pop();
+        }
 
         if (requestedSplit.length !== expectedSplit.length) {
             return next();
@@ -20,7 +24,7 @@ export default function subdomain(subdomain: string | null, fn: TMiddleware): TM
         }
 
         if (match) {
-            return fn(request, response, next);
+            return middleware(request, response, next);
         }
     }
 }

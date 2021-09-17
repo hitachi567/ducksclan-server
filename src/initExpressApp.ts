@@ -5,7 +5,6 @@ import fingerprint from 'express-fingerprint';
 import errorMiddleware from './middlewares/error.middleware';
 import subdomain from './middlewares/subdomain';
 import getFingerprint from './middlewares/getFingerprint';
-import { resolve } from 'path';
 
 export default function initExpressApp(routs?: IRout[]): Express {
     const app = express();
@@ -17,21 +16,15 @@ export default function initExpressApp(routs?: IRout[]): Express {
     app.use(getFingerprint);
     if (routs) {
         for (const rout of routs) {
-            if (rout.subdomain) {
-                app.use(subdomain(rout.subdomain, rout.router))
-            } else {
-                app.use(subdomain(null, rout.router))
-            }
+            app.use(subdomain(rout.router, rout.subdomain));
         }
-    }   
-    app.get('/', (req, res) => {
-        res.sendFile(resolve('./static/index.html'));
-    })
+    }
+    app.use(express.static('static'));
     app.use(errorMiddleware);
     return app;
 }
 
 export interface IRout {
-    subdomain?: string,
-    router: Router
+    router: Router,
+    subdomain?: string
 }
