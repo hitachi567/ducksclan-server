@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import RegistrationService from '../../../services/registration.service';
+import RegistrationService from '../registration.service';
 import UserService from '../../../services/user.service';
 
 export default class RegistrationEndpoint {

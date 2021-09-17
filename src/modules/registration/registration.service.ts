@@ -1,8 +1,8 @@
-import UserDatabase from '../database/user.database';
-import ApiError from '../utils/ApiError';
-import BcryptService from './bcrypt.service';
-import TokenService from './token.service';
-import UserService from './user.service';
+import UserDatabase from '../../database/user.database';
+import ApiError from '../../utils/ApiError';
+import BcryptService from '../../services/bcrypt.service';
+import TokenService from '../../services/token.service';
+import UserService from '../../services/user.service';
 
 export default class RegistrationService {
 
