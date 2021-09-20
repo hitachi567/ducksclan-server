@@ -1,4 +1,6 @@
-import { Column, CreatedAt, Model, Table } from 'sequelize-typescript';
+import { Column, CreatedAt, Model, Sequelize, Table } from 'sequelize-typescript';
+import { Op } from 'sequelize';
+import getRandom from '../../lib/getRandom';
 import sequelizeTypes from '../sequelize_types';
 
 const types = sequelizeTypes();
@@ -18,6 +20,16 @@ export default class ActivateCode extends Model<IActrivateCode> {
     @CreatedAt
     @Column(types.date_not_null_now)
     created_at: Date;
+
+    static async destroyAllNotRelevant(user_id?: string) {
+        let literal = Sequelize.literal(`created_at + '+2 day' < current_timestamp`);
+        let where = user_id ? { [Op.and]: [{ user_id }, literal] } : literal;
+        return ActivateCode.destroy({ where });
+    }
+
+    static generateCode() {
+        return getRandom(100000, 999999);
+    }
 
 }
 

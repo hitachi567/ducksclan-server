@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
+import User from '../../../database/entities/User';
 import RegistrationService from '../registration.service';
-import UserService from '../../../services/user.service';
 
 export default class RegistrationEndpoint {
     async validator(request: Request, response: Response, next: NextFunction) {
-        const service = new UserService();
         const { email, username, password } = request.body;
         try {
-            response.locals.email = service.checkEmail(email);
-            response.locals.username = service.checkUsername(username);
-            response.locals.password = service.checkPassword(password);
+            response.locals.email = User.checkEmail(email);
+            response.locals.username = User.checkUsername(username);
+            response.locals.password = User.checkPassword(password);
             next();
         } catch (error) {
             next(error);

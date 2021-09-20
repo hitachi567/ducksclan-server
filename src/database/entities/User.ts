@@ -1,7 +1,8 @@
 import { Column, CreatedAt, Model, Table } from 'sequelize-typescript';
-import { v4 } from 'uuid';
 import sequelizeTypes from '../sequelize_types';
 import { Op } from 'sequelize';
+import ApiError from '../../lib/ApiError';
+import { v4 } from 'uuid';
 
 const types = sequelizeTypes();
 
@@ -42,10 +43,6 @@ export default class User extends Model<IUser> {
     @Column(types.integer)
     avatar: number;
 
-    static generateID() {
-        return v4();
-    }
-
     static async addNewTestingUsers(number: number) {
         for (let i = 0; i < number; i++) {
             User.addNewTestingUser(true);
@@ -74,6 +71,61 @@ export default class User extends Model<IUser> {
                 ]
             }
         })
+    }
+
+    static findByID(id: string) {
+        return User.findOne({ where: { id } });
+    }
+
+    static findByUsername(username: string) {
+        return User.findOne({ where: { username } });
+    }
+
+    static findByEmail(email: string) {
+        return User.findOne({ where: { email } });
+    }
+
+    static generateID() {
+        return v4();
+    }
+
+    static checkUsername(username: string) {
+        if (typeof username !== 'string') {
+            throw ApiError.ValidateError('username must be string');
+        }
+        let string = username.trim();
+        if (string.length < 3) {
+            throw ApiError.ValidateError('username must be greater than or equal to 3');
+        }
+        if (string.length > 30) {
+            throw ApiError.ValidateError('username must be less than or equal to 30');
+        }
+        if (string.match(/[^a-z0-9_]/gi)) {
+            throw ApiError.ValidateError('username must contain only alphanumeric latin characters including underscore');
+        }
+        return string;
+    }
+
+    static checkPassword(password: string) {
+        if (typeof password !== 'string') {
+            throw ApiError.ValidateError('password must be string');
+        }
+        let string = password.trim();
+        if (string.length < 3) {
+            throw ApiError.ValidateError('password must be greater than or equal to 3');
+        }
+        if (string.length > 50) {
+            throw ApiError.ValidateError('password must be less than or equal to 50');
+        }
+        return string;
+    }
+
+    static checkEmail(email: string) {
+        if (typeof email !== 'string') {
+            throw ApiError.ValidateError('email must be string');
+        }
+        let string = email.trim();
+        return string;
     }
 
 }

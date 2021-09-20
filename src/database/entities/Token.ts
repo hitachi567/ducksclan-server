@@ -26,26 +26,18 @@ export default class Token extends Model<IToken> {
     @Column(types.date_not_null_now)
     created_at: Date;
 
-    static findAllNotRelevant(user_id: string) {
-        return Token.findAll({
-            where: {
-                [Op.and]: [
-                    { user_id: user_id },
-                    Sequelize.literal(`created_at + '+30 day' < current_timestamp`)
-                ]
-            }
-        })
+    static async destroyAllNotRelevant(user_id?: string) {
+        let literal = Sequelize.literal(`created_at + '+30 day' < current_timestamp`);
+        let where = user_id ? { [Op.and]: [{ user_id }, literal] } : literal;
+        return Token.destroy({ where });
     }
 
-    static async destroyNotRelevant(user_id: string) {
-        const notRelevantTokens = await Token.findAllNotRelevant(user_id);
-        for (const notRelevantToken of notRelevantTokens) {
-            await notRelevantToken.destroy();
-        }
+    static destroyAllByUserID(user_id: string) {
+        return Token.destroy({ where: { user_id } });
     }
 
     static findByFingerprint(fingerprint: string) {
-        return Token.findOne({ where: { fingerprint } })
+        return Token.findOne({ where: { fingerprint } });
     }
 
 }
