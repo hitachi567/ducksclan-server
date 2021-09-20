@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body style="margin: 0;">
+    <div class="letter" style="
+        display: flex;
+        background-color: hsl(235, 37%, 69%);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+          'Lucida Sans', Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+      ">
+        <div class="cart" style="
+          border-radius: 2rem;
+          background-color: aliceblue;
+          margin: 2rem;
+          padding: 1.5rem 3rem;
+        ">
+            <p class="no-padding" style="padding-left: 0; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                Hey, {{username}}!
+            </p>
+            <p style="padding-left: 20px; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                It looks like you signed up on <a href="http://ducksclan.ru">Ducks clan</a>.
+            </p>
+            <p style="padding-left: 20px; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                Your activate code is
+                <span class="code" style="font-weight: bold; color: midnightblue;">
+                    {{code}}.
+                </span>
+            </p>
+            <p style="padding-left: 20px; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                If you are not, you can ignore this letter.
+            </p>
+            <p style="padding-left: 20px; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                Or you can click on the link to immediately destroy the account
+                associated with this email: {{deleteLink}}
+            </p>
+            <p class="no-padding" style="padding-left: 0; color: hsl(0, 0%, 21%); margin: 0.5em 0 0;">
+                Thanks,
+            </p>
+            <p class="end" style="padding-left: 0; color: hsl(0, 0%, 21%); margin: 0 0 0.5em;">
+                Duck Clan Support
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

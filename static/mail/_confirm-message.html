@@ -1,0 +1,66 @@
+<div class="letter">
+
+    <div class="cart">
+        <p class="no-padding">Hey, {{username}}!</p>
+        <p>It looks like you signed up on <a href="http://ducksclan.ru">Ducks clan</a>.</p>
+        <p>Your activate code is <span class="code">{{code}}.</span></p>
+        <p>If you are not, you can ignore this letter.</p>
+        <p>
+            Or you can click on the link to immediately destroy the account associated with this email:
+            {{deleteLink}}
+        </p>
+        <p class="no-padding">Thanks,</p>
+        <p class="end">Duck Clan Support</p>
+    </div>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .letter {
+            display: flex;
+            background-color:hsl(235, 37%, 69%);
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+        }
+
+        .cart {
+            margin: 2rem;
+            padding: 1.5rem 3rem;
+            border-radius: 2rem;
+            background-color: aliceblue;
+        }
+
+        p {
+            padding-left: 20px;
+            margin: 0.5em 0 0;
+            color: hsl(0, 0%, 21%);
+        }
+
+        p[class] {
+            padding-left: 0;
+        }
+        
+        p.end {
+            margin: 0 0 0.5em;
+        }
+
+        p > .code {
+            font-weight: bold;
+            color: midnightblue;
+        }
+
+        .logo {
+            display: flex;
+            flex: 1 1 auto;
+            margin: 1rem;
+            text-decoration: none;
+            text-shadow: -1px -1px 5px hsl(0, 0%, 0%),
+                3px 3px 20px hsl(0, 0%, 90%), 0px 0px 7px hsl(320, 46%, 59%);
+            color: hsl(0, 18%, 97%);
+            font-size: 36px;
+        }
+    </style>
+</div>
