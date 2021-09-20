@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { v4 } from 'uuid';
-import toNumber from './utils/toNumber';
+import makeDirctory from './lib/makeDirectory';
+import toNumber from './lib/toNumber';
 
 export default class Config {
     readonly port: string | number;
@@ -20,6 +21,10 @@ export default class Config {
     };
 
     constructor() {
+        makeDirctory('./logs/');
+        makeDirctory('./logs/console');
+        makeDirctory('./logs/database');
+
         const isProd = process.env.NODE_ENV === 'production';
         this.envPath = isProd ? './prod.env' : './dev.env';
         dotenv.config({ path: this.envPath });

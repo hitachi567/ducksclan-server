@@ -1,8 +1,7 @@
-import UserDatabase from '../../database/user.database';
-import ApiError from '../../utils/ApiError';
+import User from '../../database/entities/User';
+import ApiError from '../../lib/ApiError';
 import BcryptService from '../../services/bcrypt.service';
 import TokenService from '../../services/token.service';
-import UserService from '../../services/user.service';
 
 export default class RegistrationService {
 
@@ -13,20 +12,24 @@ export default class RegistrationService {
         fingerprint: string,
         ip?: string
     ) {
-        await this.validateNewUser(username, email);
+        await this.checkUniqueness(username, email);
 
-        const userService = new UserService();
-        const user_id = userService.generateUserID();
+        const user_id = User.generateID();
         const hashedPassword = await new BcryptService().hashingPassword(password);
-        await userService.create(user_id, username, hashedPassword, email);
+        await new User({
+            id: user_id,
+            email,
+            username,
+            password: hashedPassword
+        }).save();
 
         const tokenService = new TokenService();
-        const tokens = tokenService.generateTokens({ user_id, fingerprint });
+        const tokens = tokenService.generateTokens({ user_id, fingerprint, ip });
         await tokenService.saveToken({
             user_id,
             fingerprint,
             ip,
-            date: tokens.date,
+            created_at: tokens.created_at,
             token: tokens.refreshToken
         });
 
@@ -41,20 +44,10 @@ export default class RegistrationService {
         return ApiError.BadRequest();
     }
 
-    protected async validateNewUser(username: string, email: string) {
-        const client = await UserDatabase.getInstance();
-        try {
-            const result1 = await client.findOne().byUsername(username);
-            if (result1.rowCount > 0) {
-                throw ApiError.BadRequest('username is taken');
-            }
-
-            const result2 = await client.findOne().byEmail(email);
-            if (result2.rowCount > 0) {
-                throw ApiError.BadRequest('email is taken');
-            }
-        } finally {
-            client.close();
+    protected async checkUniqueness(username: string, email: string) {
+        const result = await User.findByUsernameOrEmail(username, email)
+        if (result.length > 0) {
+            throw ApiError.BadRequest('username or email occupied');
         }
     }
 }

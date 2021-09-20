@@ -1,51 +1,33 @@
-import { Pool, Client } from 'pg';
+import { Sequelize } from 'sequelize-typescript';
 import { config } from '..';
-import getSql from './getSql';
-
-const tables = [
-    'user',
-    'user_photo',
-    'user_online',
-    'disabled_user',
-    'token',
-    'activate_code',
-    'journal'
-];
+import ActivateCode from './entities/ActivateCode';
+import DisabledUser from './entities/DisabledUser';
+import Journal from './entities/Journal';
+import Token from './entities/Token';
+import User from './entities/User';
+import UserPhoto from './entities/UserPhoto';
+import Log from '../lib/Log';
 
 export default class Database {
-    protected pool: Pool;
+    protected sequelize = new Sequelize({
+        dialect: 'postgres',
+        dialectOptions: config.pg,
+        logging: sql => Log.db(sql),
+        models: [
+            User,
+            UserPhoto,
+            Token,
+            DisabledUser,
+            ActivateCode,
+            Journal
+        ]
+    });
 
-    constructor() {
-        this.pool = new Pool(config.pg);
+    async authenticate() {
+        await this.sequelize.authenticate();
     }
 
-    getClient() {
-        return this.pool.connect();
-    }
-
-    static async createTables() {
-        const client = new Client(config.pg);
-        await client.connect();
-        try {
-            for (const table of tables) {
-                const sql = getSql(`./tables/${table}.sql`);
-                await client.query(sql);
-            }
-        } finally {
-            await client.end();
-        }
-    }
-
-    static async deleteTables() {
-        const client = new Client(config.pg);
-        await client.connect();
-        try {
-            for (const table of tables) {
-                const sql = `drop table if exists "${table}" cascade;`;
-                await client.query(sql);
-            }
-        } finally {
-            await client.end();
-        }
+    async sync() {
+        await this.sequelize.sync({ alter: true });
     }
 }

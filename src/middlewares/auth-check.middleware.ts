@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ApiError from '../utils/ApiError';
+import ApiError from '../lib/ApiError';
 import TokenService, { TokenPayload } from '../services/token.service';
 
 function authCheckMiddleware(request: Request, response: Response, next: NextFunction) {

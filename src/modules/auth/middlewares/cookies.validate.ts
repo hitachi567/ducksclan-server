@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
-import ApiError from '../../../utils/ApiError';
+import ApiError from '../../../lib/ApiError';
 import LoginDto from '../dtos/login.dto';
 
 export default class CookiesValidate {

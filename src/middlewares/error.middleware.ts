@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ApiError from '../utils/ApiError';
+import ApiError from '../lib/ApiError';
 
 function errorMiddleware(err: any, req: Request, res: Response, next: NextFunction) {
     let error = err instanceof ApiError ? err : ApiError.InternalServerError();

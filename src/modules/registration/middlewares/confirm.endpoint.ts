@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
 import ConfirmDto from '../dtos/confirm.dto';
-import ApiError from '../../../utils/ApiError';
+import ApiError from '../../../lib/ApiError';
 import RegistrationService from '../registration.service';
 
 export default class ConfirmEndpoint {
