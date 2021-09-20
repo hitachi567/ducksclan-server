@@ -1,24 +1,26 @@
 import { createTransport, Transporter } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { config } from '..';
 
 export enum Subjects {
-    confirmRegistration =  'Confirmation of registration',
+    confirmRegistration = 'Confirmation of registration',
     changePassword = 'Change password'
 };
 
 export default class MailService {
     protected transporter: Transporter<SMTPTransport.SentMessageInfo>;
-    private email: string = 'ducks.clan.app@gmail.com';
-    private password: string = 'Qtr`CNSb"9QK6K2T';
+    private service: string = config.nodeMail.service;
+    private email: string = config.nodeMail.email;
+    private password: string = config.nodeMail.password;
 
     constructor() {
         this.transporter = createTransport({
-            service: 'gmail',
+            service: this.service,
             auth: {
                 user: this.email,
                 pass: this.password
             }
-        });        
+        });
     }
 
     async sendMail(to: string, subject: Subjects) {

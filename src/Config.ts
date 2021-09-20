@@ -19,6 +19,11 @@ export default class Config {
         password: string
         database: string
     };
+    readonly nodeMail: {
+        service: string,
+        email: string,
+        password: string
+    }
 
     constructor() {
         makeDirctory('./logs/');
@@ -41,6 +46,11 @@ export default class Config {
             password: process.env.PGPASSWORD || 'root',
             database: process.env.PGDATABASE || 'ducks-database'
         }
+        this.nodeMail = {
+            service: process.env.service || 'gmail',
+            email: process.env.email || 'ducks.clan.app@gmail.com',
+            password: process.env.password || 'Qtr`CNSb"9QK6K2T'
+        }
         this.rewriteEnvFile();
     }
 
@@ -54,7 +64,10 @@ export default class Config {
             `PGPASSWORD=${this.pg.password}\n` +
             `PGDATABASE=${this.pg.database}\n` +
             `PGHOST=${this.pg.host}\n` +
-            `PGPORT=${this.pg.port}\n`;
+            `PGPORT=${this.pg.port}\n` +
+            `nodeMailService=${this.nodeMail.service}\n` +
+            `nodeMailEmail=${this.nodeMail.email}\n` +
+            `nodeMailPassword=${this.nodeMail.password}\n`;
         writeFileSync(this.envPath, newEnvFile);
     }
 
