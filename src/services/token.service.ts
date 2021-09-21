@@ -30,7 +30,7 @@ export default class TokenService {
     }
 
     async saveToken(data: IToken) {
-        Token.destroyNotRelevant(data.user_id);
+        Token.destroyAllNotRelevant(data.user_id);
         Token.findByPk(data.fingerprint);
         return new Token(data).save();
     }

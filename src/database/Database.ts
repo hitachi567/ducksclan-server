@@ -7,6 +7,7 @@ import Token from './entities/Token';
 import User from './entities/User';
 import UserPhoto from './entities/UserPhoto';
 import Log from '../lib/Log';
+import DestructionLink from './entities/DestructionLink';
 
 export default class Database {
     protected sequelize = new Sequelize({
@@ -18,6 +19,7 @@ export default class Database {
             UserPhoto,
             Token,
             DisabledUser,
+            DestructionLink,
             ActivateCode,
             Journal
         ]

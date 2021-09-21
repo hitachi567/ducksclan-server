@@ -30,7 +30,7 @@ export default class MailService {
         Log.info("Message sent: %s", info.messageId);
     }
 
-    async sendConfirmMessage(email: string, username: string, code: string, deleteLink: string) {
+    async sendConfirmMessage(email: string, username: string, code: string | number, deleteLink: string) {
         let text = `Hey, ${username}!\n`
             + 'It looks like you signed up on Ducks clan.\n'
             + `Your code is ${code}.\n`
@@ -40,7 +40,7 @@ export default class MailService {
         let html = (await readFile('./static/mail/confirm-message.html'))
             .toString()
             .replace(/{{username}}/g, username)
-            .replace(/{{code}}/g, code)
+            .replace(/{{code}}/g, code.toString())
             .replace(/{{deleteLink}}/g, deleteLink);
         await this.sendMail(email, Subjects.confirmRegistration, text, html);
     }

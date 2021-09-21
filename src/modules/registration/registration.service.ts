@@ -1,6 +1,9 @@
+import ActivateCode from '../../database/entities/ActivateCode';
+import DestructionLink from '../../database/entities/DestructionLink';
 import User from '../../database/entities/User';
 import ApiError from '../../lib/ApiError';
 import BcryptService from '../../services/bcrypt.service';
+import MailService from '../../services/mail.service';
 import TokenService from '../../services/token.service';
 
 export default class RegistrationService {
@@ -33,7 +36,18 @@ export default class RegistrationService {
             token: tokens.refreshToken
         });
 
-        // send mail
+        const code = ActivateCode.generateCode();
+        await new ActivateCode({ user_id, code }).save();
+
+        const link = 'registration.api.ducksclan.ru/destroy/' + DestructionLink.generateLinkPayload();
+        await new DestructionLink({ user_id, link }).save();
+
+        setTimeout(() => {
+            this.reject(user_id,)
+        }, 2 * 24 * 60 * 60 * 1000)
+
+        await new MailService().sendConfirmMessage(email, username, code, link)
+
         return {
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken
@@ -42,6 +56,13 @@ export default class RegistrationService {
 
     confirm(code: string) {
         return ApiError.BadRequest();
+    }
+
+    protected reject(user_id: string,) {
+        ActivateCode.destroy({ where: { user_id } });
+        DestructionLink.destroy({ where: { user_id } });
+        User.destroy({ where: { id: user_id } });
+        
     }
 
     protected async checkUniqueness(username: string, email: string) {
