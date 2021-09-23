@@ -1,13 +1,10 @@
 import chalk from 'chalk';
-import Datestamp from './Datestamp';
 import { createRollingFileLogger } from 'simple-node-logger';
 import makeDirctory from './makeDirectory';
 
 export default class Log {
-
-    protected static consoleLogger = Log.getLogger('console')
-
-    protected static databaseLogger = Log.getLogger('database')
+    protected static defaultLogger = Log.getLogger('default');
+    protected static databaseLogger = Log.getLogger('database');
 
     protected static getLogger(type: string) {
         makeDirctory('./logs');
@@ -15,44 +12,73 @@ export default class Log {
         return createRollingFileLogger({
             logDirectory: './logs/' + type,
             fileNamePattern: '<DATE>.log',
+            domain: type,
             dateFormat: 'YYYY-MM-DD',
             timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
         });
     }
 
+    protected static begin(level: string, date: Date) {
+        let upperLevel = level.toUpperCase(),
+            dateColor = chalk.yellowBright,
+            levelColor = chalk.bold;
+        switch (upperLevel) {
+            case 'INFO':
+                levelColor = levelColor.cyan;
+                break;
+            case 'WARN':
+                levelColor = levelColor.yellow;
+                break;
+            case 'ERROR':
+                dateColor = dateColor.bold.redBright;
+                levelColor = levelColor.redBright;
+                break;
+            default:
+                levelColor = levelColor.cyan;
+                break;
+        }
+        return `[${levelColor(upperLevel)}] ${dateColor(date.toISOString())}: `;
+    }
+
+    protected static log(begin: string, message: any, ...args: any[]) {
+        if (typeof message === 'object') {
+            console.log('%s%O', begin, message, ...args);
+        } else {
+            console.log('%s' + message, begin, ...args);
+        }
+    }
+
+    static info(message: any, ...args: any[]) {
+        let begin = Log.begin('info', new Date());
+        Log.log(begin, message, ...args);
+        Log.defaultLogger.info(message, ...args);
+    }
+
+    static warn(message: any, ...args: any[]) {
+        let begin = Log.begin('warn', new Date());
+        Log.log(begin, message, ...args);
+        Log.defaultLogger.warn(message, ...args);
+    }
+
+    static error(message: any = '', ...args: any[]) {
+        let begin = Log.begin('error', new Date());
+        Log.log(begin, message, ...args);
+        Log.defaultLogger.error(message, ...args);
+    }
+
     static restart() {
         let str1 = '-------------------------------------------------------------------------------------------';
         let str2 = '                                          restart                                          ';
-        Log.consoleLogger.info(str1);
-        Log.consoleLogger.info(str2);
-        Log.consoleLogger.info(str1);
-        Log.databaseLogger.info(str1);
-        Log.databaseLogger.info(str2);
-        Log.databaseLogger.info(str1);
+        this.defaultLogger.info(str1);
+        this.defaultLogger.info(str2);
+        this.defaultLogger.info(str1);
+        this.databaseLogger.info(str1);
+        this.databaseLogger.info(str2);
+        this.databaseLogger.info(str1);
     }
 
     static db(...arr: any[]) {
         this.databaseLogger.info(...arr)
     }
 
-    static info(message: any = '', ...optionalParams: any[]) {
-        const type = `[${chalk.cyan('INFO')}] `;
-        const timestamp = chalk.yellowBright(new Datestamp().daytime) + ': ';
-        console.log(type + timestamp + message, ...optionalParams);
-        Log.consoleLogger.info(message, ...optionalParams)
-    }
-
-    static warn(message: any = '', ...optionalParams: any[]) {
-        const type = `[${chalk.yellow('WARN')}] `;
-        const timestamp = chalk.yellowBright(new Datestamp().daytime) + ': ';
-        console.log(type + timestamp + message, ...optionalParams);
-        Log.consoleLogger.warn(message, ...optionalParams)
-    }
-
-    static error(message: any = '', ...optionalParams: any[]) {
-        const type = `[${chalk.redBright('ERROR')}] `;
-        const timestamp = chalk.bold.redBright(new Datestamp().daytime) + ': ';
-        console.log(`%s${message}`, type + timestamp, ...optionalParams);
-        Log.consoleLogger.error(message, ...optionalParams)
-    }
 }

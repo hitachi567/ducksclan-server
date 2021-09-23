@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { v4 } from 'uuid';
 import makeDirctory from './lib/makeDirectory';
 import toNumber from './lib/toNumber';
+import GeneratorService from './services/generator.service';
 
 export default class Config {
     readonly port: string | number;
@@ -37,8 +37,8 @@ export default class Config {
         this.ssl = this.getSsl();
         this.port = process.env.port || 5000;
         this.subdomainOffset = toNumber(process.env.subdomainOffset || (isProd ? 2 : 1));
-        this._jwtAccessSecret = process.env.jwtAccessSecret || v4();
-        this._jwtRefreshSecret = process.env.jwtRefreshSecret || v4();
+        this._jwtAccessSecret = process.env.jwtAccessSecret || GeneratorService.generateSequense(40);
+        this._jwtRefreshSecret = process.env.jwtRefreshSecret || GeneratorService.generateSequense(40);
         this.pg = {
             host: process.env.PGHOST || 'localhost',
             port: toNumber(process.env.PGPORT || 5432),
@@ -72,8 +72,8 @@ export default class Config {
     }
 
     updateJwtSecrets() {
-        this._jwtAccessSecret = v4();
-        this._jwtRefreshSecret = v4();
+        this._jwtAccessSecret = GeneratorService.generateSequense(40);
+        this._jwtRefreshSecret = GeneratorService.generateSequense(40);
         this.rewriteEnvFile();
     }
 
