@@ -1,4 +1,3 @@
-import { readFile } from 'fs/promises';
 import { createTransport, Transporter } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { config } from '..';
@@ -30,18 +29,17 @@ export default class MailService {
         Log.info("Message sent: %s", info.messageId);
     }
 
-    async sendConfirmMessage(email: string, username: string, code: string | number, deleteLink: string) {
+    async sendConfirmMessage(email: string, username: string, link: string) {
         let text = `Hey, ${username}!\n`
             + 'It looks like you signed up on Ducks clan.\n'
-            + `Your code is ${code}.\n`
-            + 'If you are not, you can ignore this letter.\nOr you can click on the link '
-            + 'to immediately destroy the account associated with this email: ' + deleteLink
+            + `Your activation link is ${link}.\n`
+            + 'If you are not, you can ignore this letter.'
             + 'Thanks,\nDuck Clan Support';
-        let html = (await readFile('./static/mail/confirm-message.html'))
-            .toString()
-            .replace(/{{username}}/g, username)
-            .replace(/{{code}}/g, code.toString())
-            .replace(/{{deleteLink}}/g, deleteLink);
-        await this.sendMail(email, Subjects.confirmRegistration, text, html);
+        // let html = (await readFile('./static/mail/confirm-message.html'))
+        //     .toString()
+        //     .replace(/{{username}}/g, username)
+        //     .replace(/{{code}}/g, code.toString())
+        //     .replace(/{{deleteLink}}/g, deleteLink);
+        await this.sendMail(email, Subjects.confirmRegistration, text);
     }
 }

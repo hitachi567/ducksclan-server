@@ -1,4 +1,5 @@
 import { Column, CreatedAt, Model, Table } from 'sequelize-typescript';
+import { EntitieUserPhoto } from '../../interfaces/entities';
 import sequelizeTypes from '../sequelize_types';
 
 const types = sequelizeTypes();
@@ -7,7 +8,7 @@ const types = sequelizeTypes();
     tableName: 'user_photos',
     modelName: 'UserPhoto'
 })
-export default class UserPhoto extends Model<IUserPhoto> {
+export default class UserPhoto extends Model<EntitieUserPhoto> {
 
     @Column(types.text_primary_key)
     url: string;
@@ -22,11 +23,4 @@ export default class UserPhoto extends Model<IUserPhoto> {
     @Column(types.date_not_null_now)
     created_at: Date;
 
-}
-
-export interface IUserPhoto {
-    url: string;
-    user_id: string;
-    number: number;
-    created_at?: Date;
 }

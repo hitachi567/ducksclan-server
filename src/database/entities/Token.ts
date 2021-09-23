@@ -1,6 +1,7 @@
 import { Column, CreatedAt, Model, Sequelize, Table } from 'sequelize-typescript';
 import { Op } from 'sequelize';
 import sequelizeTypes from '../sequelize_types';
+import { EntitieToken } from '../../interfaces/entities';
 
 const types = sequelizeTypes();
 
@@ -8,7 +9,7 @@ const types = sequelizeTypes();
     tableName: 'tokens',
     modelName: 'Token'
 })
-export default class Token extends Model<IToken> {
+export default class Token extends Model<EntitieToken> {
 
     @Column(types.text_primary_key)
     token: string
@@ -40,12 +41,4 @@ export default class Token extends Model<IToken> {
         return Token.findOne({ where: { fingerprint } });
     }
 
-}
-
-export interface IToken {
-    token: string;
-    fingerprint: string;
-    user_id: string;
-    ip?: string;
-    created_at?: Date;
 }

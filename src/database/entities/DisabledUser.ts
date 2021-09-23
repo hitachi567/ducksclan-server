@@ -1,4 +1,5 @@
 import { Column, CreatedAt, Model, Table } from 'sequelize-typescript';
+import { EntitieDisabledUser } from '../../interfaces/entities';
 import sequelizeTypes from '../sequelize_types';
 
 const types = sequelizeTypes();
@@ -7,7 +8,7 @@ const types = sequelizeTypes();
     tableName: 'disabled_users',
     modelName: 'DisabledUser'
 })
-export default class DisabledUser extends Model<IDisabledUser> {
+export default class DisabledUser extends Model<EntitieDisabledUser> {
 
     @Column(types.uuid_primary_key)
     user_id: string;
@@ -25,12 +26,4 @@ export default class DisabledUser extends Model<IDisabledUser> {
     @Column(types.date)
     end_date: Date;
 
-}
-
-export interface IDisabledUser {
-    user_id: string;
-    by: string;
-    reason: number;
-    start_date?: Date;
-    end_date?: Date;
 }

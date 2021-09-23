@@ -1,4 +1,5 @@
 import { Column, CreatedAt, Model, Table, PrimaryKey } from 'sequelize-typescript';
+import { EntitieJournal } from '../../interfaces/entities';
 import sequelizeTypes from '../sequelize_types';
 
 const types = sequelizeTypes();
@@ -7,7 +8,7 @@ const types = sequelizeTypes();
     tableName: 'journal',
     modelName: 'Journal'
 })
-export default class Journal extends Model<IJournal> {
+export default class Journal extends Model<EntitieJournal> {
 
     @PrimaryKey
     @Column
@@ -35,15 +36,4 @@ export default class Journal extends Model<IJournal> {
     @Column(types.date_not_null_now)
     created_at: Date;
 
-}
-
-export interface IJournal {
-    id?: number;
-    fingerprint?: string;
-    ip?: string;
-    user_id?: string;
-    action: string;
-    success: boolean;
-    note?: string;
-    created_at?: Date;
 }

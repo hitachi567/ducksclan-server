@@ -1,35 +1,36 @@
 import { Sequelize } from 'sequelize-typescript';
 import { config } from '..';
-import ActivateCode from './entities/ActivateCode';
+import ActivateLink from './entities/ActivateLink';
 import DisabledUser from './entities/DisabledUser';
 import Journal from './entities/Journal';
 import Token from './entities/Token';
 import User from './entities/User';
 import UserPhoto from './entities/UserPhoto';
 import Log from '../lib/Log';
-import DestructionLink from './entities/DestructionLink';
 
 export default class Database {
-    protected sequelize = new Sequelize({
-        dialect: 'postgres',
-        dialectOptions: config.pg,
-        logging: sql => Log.db(sql),
-        models: [
-            User,
-            UserPhoto,
-            Token,
-            DisabledUser,
-            DestructionLink,
-            ActivateCode,
-            Journal
-        ]
-    });
+    protected static sequelize: Sequelize;
 
-    async authenticate() {
+    static async init() {
+        this.sequelize = new Sequelize({
+            dialect: 'postgres',
+            dialectOptions: config.pg,
+            logging: sql => Log.db(sql),
+            models: [
+                User,
+                UserPhoto,
+                Token,
+                DisabledUser,
+                ActivateLink,
+                Journal
+            ]
+        });
         await this.sequelize.authenticate();
-    }
-
-    async sync() {
         await this.sequelize.sync({ alter: true });
     }
+
+    static drop() {
+        return this.sequelize.drop()
+    }
+
 }

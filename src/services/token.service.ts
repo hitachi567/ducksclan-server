@@ -1,43 +1,72 @@
 import jwt from 'jsonwebtoken';
 import { config } from '..';
-import Token, { IToken } from '../database/entities/Token';
+import Token from '../database/entities/Token';
+import { EntitieToken } from '../interfaces/entities';
 
 export default class TokenService {
-    private accessSecret: string = config.jwtSecrets.access;
-    private refreshSecret: string = config.jwtSecrets.refresh;
 
-    generateTokens(payload: TokenPayload) {
-        const created_at = new Date()
-        const accessToken = jwt.sign(payload, this.accessSecret, { expiresIn: '30m' });
-        const refreshToken = jwt.sign(payload, this.refreshSecret, { expiresIn: '30d' });
+    static generate(payload: TokenPayload): Tokens {
+        const created_at = new Date();
+        const access = jwt.sign(payload, config.jwtSecrets.access, { expiresIn: '30m' });
+        const refresh = jwt.sign(payload, config.jwtSecrets.refresh, { expiresIn: '30d' });
         return {
             created_at,
-            accessToken,
-            refreshToken
+            access,
+            refresh
         }
     }
 
-    getPayload(token: string) {
+    static getPayload(token: string) {
         return jwt.decode(token);
     }
 
-    validateAccessToken(token: string) {
-        return jwt.verify(token, this.accessSecret) as TokenPayload;
+    static validateAccess(token: string) {
+        return jwt.verify(token, config.jwtSecrets.access) as TokenPayload;
     }
 
-    validateRefreshToken(token: string) {
-        return jwt.verify(token, this.refreshSecret) as TokenPayload;
+    static validateRefresh(token: string) {
+        return jwt.verify(token, config.jwtSecrets.refresh) as TokenPayload;
     }
 
-    async saveToken(data: IToken) {
-        Token.destroyAllNotRelevant(data.user_id);
-        Token.findByPk(data.fingerprint);
-        return new Token(data).save();
+    static async save(data: EntitieToken) {
+        await Token.destroyAllNotRelevant(data.user_id);
+        let token = await Token.findByFingerprint(data.fingerprint);
+
+        if (token) {
+            token.token = data.token;
+            token.user_id = data.user_id;
+            token.created_at = data.created_at || new Date();
+            if (data.ip) token.ip = data.ip;
+        } else {
+            token = new Token(data);
+        }
+
+        return await token.save();
     }
+
+    static async generateAndSave(payload: TokenPayload) {
+        let tokens = this.generate(payload);
+
+        await this.save({
+            ...payload,
+            token: tokens.refresh,
+            created_at: tokens.created_at
+        });
+
+        delete tokens.created_at;
+        return tokens;
+    }
+
 }
 
 export class TokenPayload {
     user_id: string;
     fingerprint: string;
     ip?: string;
+}
+
+export class Tokens {
+    access: string;
+    refresh: string;
+    created_at?: Date;
 }
