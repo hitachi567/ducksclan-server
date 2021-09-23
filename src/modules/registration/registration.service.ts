@@ -1,74 +1,35 @@
-import ActivateCode from '../../database/entities/ActivateCode';
-import DestructionLink from '../../database/entities/DestructionLink';
-import User from '../../database/entities/User';
+import { IRegistrationArguments } from '../../interfaces/auth';
 import ApiError from '../../lib/ApiError';
 import BcryptService from '../../services/bcrypt.service';
+import GeneratorService from '../../services/generator.service';
 import MailService from '../../services/mail.service';
 import TokenService from '../../services/token.service';
+import UserService from '../../services/user.service';
 
 export default class RegistrationService {
+    static timeouts = new Map<string, NodeJS.Timeout>();
 
-    async registration(
-        username: string,
-        email: string,
-        password: string,
-        fingerprint: string,
-        ip?: string
-    ) {
-        await this.checkUniqueness(username, email);
+    static async registration(data: IRegistrationArguments) {
+        const { username, email, fingerprint, ip } = data
+        await UserService.checkingUniquenessUsernameAndEmail(username, email);
 
-        const user_id = User.generateID();
-        const hashedPassword = await new BcryptService().hashingPassword(password);
-        await new User({
-            id: user_id,
-            email,
-            username,
-            password: hashedPassword
-        }).save();
+        const password = await BcryptService.hashingPassword(data.password);
+        const user = await UserService.create({ username, email, password });
+        const tokens = await TokenService.generateAndSave({ user_id: user.id, fingerprint, ip });
+        const link = 'http://auth.api.ducksclan.ru/activate/' + GeneratorService.generateSequense(60);
+        const day = 24 * 60 * 60 * 1000;
 
-        const tokenService = new TokenService();
-        const tokens = tokenService.generateTokens({ user_id, fingerprint, ip });
-        await tokenService.saveToken({
-            user_id,
-            fingerprint,
-            ip,
-            created_at: tokens.created_at,
-            token: tokens.refreshToken
-        });
+        await new MailService().sendConfirmMessage(email, username, link);
+        this.timeouts.set(user.id, setTimeout(cb, 7 * day));
 
-        const code = ActivateCode.generateCode();
-        await new ActivateCode({ user_id, code }).save();
+        return tokens;
 
-        const link = 'registration.api.ducksclan.ru/destroy/' + DestructionLink.generateLinkPayload();
-        await new DestructionLink({ user_id, link }).save();
-
-        setTimeout(() => {
-            this.reject(user_id,)
-        }, 2 * 24 * 60 * 60 * 1000)
-
-        await new MailService().sendConfirmMessage(email, username, code, link)
-
-        return {
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken
-        };
+        async function cb() {
+            await UserService.rejectActivation(user.id)
+        }
     }
 
     confirm(code: string) {
         return ApiError.BadRequest();
-    }
-
-    protected reject(user_id: string,) {
-        ActivateCode.destroy({ where: { user_id } });
-        DestructionLink.destroy({ where: { user_id } });
-        User.destroy({ where: { id: user_id } });
-        
-    }
-
-    protected async checkUniqueness(username: string, email: string) {
-        const result = await User.findByUsernameOrEmail(username, email)
-        if (result.length > 0) {
-            throw ApiError.BadRequest('username or email occupied');
-        }
     }
 }
