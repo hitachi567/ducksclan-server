@@ -1,14 +1,9 @@
-import { IRout } from './initExpressApp';
-import AuthRouter from './modules/auth/router';
-import RegistrationRouter from './modules/registration/router';
+import { IRout } from '..';
+import AuthRouter from './auth/router';
 
 export const routs: IRout[] = [
-    // {
-    //     subdomain: 'auth.api',
-    //     router: AuthRouter
-    // },
     {
-        subdomain: 'registration.api',
-        router: RegistrationRouter
+        subdomain: 'auth.api',
+        router: AuthRouter
     },
 ];
