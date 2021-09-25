@@ -66,17 +66,6 @@ export default class Log {
         Log.defaultLogger.error(message, ...args);
     }
 
-    static restart() {
-        let str1 = '-------------------------------------------------------------------------------------------';
-        let str2 = '                                          restart                                          ';
-        this.defaultLogger.info(str1);
-        this.defaultLogger.info(str2);
-        this.defaultLogger.info(str1);
-        this.databaseLogger.info(str1);
-        this.databaseLogger.info(str2);
-        this.databaseLogger.info(str1);
-    }
-
     static db(...arr: any[]) {
         this.databaseLogger.info(...arr)
     }

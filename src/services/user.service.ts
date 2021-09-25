@@ -1,12 +1,12 @@
 import ActivateLink from '../database/entities/ActivateLink';
 import User from '../database/entities/User';
 import ApiError from '../lib/ApiError';
-import GeneratorService from './generator.service';
+import Generator from '../lib/Generator';
 
 export default class UserService {
 
     static generateID() {
-        return GeneratorService.generateUserID();
+        return Generator.generateUserID();
     }
 
     static create(user: {

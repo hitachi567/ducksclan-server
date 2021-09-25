@@ -33,7 +33,7 @@ export default class MailService {
         let text = `Hey, ${username}!\n`
             + 'It looks like you signed up on Ducks clan.\n'
             + `Your activation link is ${link}.\n`
-            + 'If you are not, you can ignore this letter.'
+            + 'If you are not, you can ignore this letter.\n'
             + 'Thanks,\nDuck Clan Support';
         // let html = (await readFile('./static/mail/confirm-message.html'))
         //     .toString()

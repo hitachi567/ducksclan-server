@@ -1,4 +1,4 @@
-import { TMiddleware } from './TMiddleware';
+import { TMiddleware } from '../interfaces/TMiddleware';
 import { config } from '..';
 
 export default function subdomain(middleware: TMiddleware, subdomain?: string): TMiddleware {
