@@ -1,17 +1,24 @@
 import { UserInterface, UserJSON, UserInfo, UserProfile } from '../interfaces/user.interface';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { Generator } from '@hitachi567/core';
 import BaseEntity from '../database/a.base.entity';
+import RefreshToken from './refresh-token';
 
 @Entity()
 export default class User extends BaseEntity implements UserInterface {
 
-    constructor(email: string) {
+    constructor(email: string, username: string) {
 
         super();
 
         this.email = email;
-        this.username = email.split('@')[0];
+        this.username = username;
+
+    }
+
+    static init(email: string) {
+
+        return new User(email, email.split('@')[0]);
 
     }
 
@@ -63,7 +70,7 @@ export default class User extends BaseEntity implements UserInterface {
 
     confirmEmail() {
         this.isConfirmed = true;
-        this.confirm_link = null;
+        this.confirm_link = undefined;
         this.confirmed_at = new Date();
     }
 
@@ -74,7 +81,7 @@ export default class User extends BaseEntity implements UserInterface {
 
     unban() {
         this.isBanned = false;
-        this.banned_at = null;
+        this.banned_at = undefined;
     }
 
     // info
@@ -89,7 +96,7 @@ export default class User extends BaseEntity implements UserInterface {
     username: string;
 
     @Column({ nullable: true })
-    password: string | null = null;
+    password?: string;
 
     // email confirm status
 
@@ -97,10 +104,10 @@ export default class User extends BaseEntity implements UserInterface {
     isConfirmed: boolean = false;
 
     @Column({ nullable: true })
-    confirmed_at: Date | null = null;
+    confirmed_at?: Date;
 
     @Column({ type: 'text', nullable: true })
-    confirm_link: string | null = null;
+    confirm_link?: string;
 
     // online status
 
@@ -116,14 +123,19 @@ export default class User extends BaseEntity implements UserInterface {
     isBanned: boolean = true;
 
     @Column({ nullable: true })
-    banned_at: Date | null = new Date();
+    banned_at?: Date = new Date();
 
     // profile
 
     @Column({ nullable: true })
-    name: string | null = null;
+    name?: string;
 
     @Column({ nullable: true })
-    bio: string | null = null;
+    bio?: string;
+
+    // relations
+
+    @OneToMany(() => RefreshToken, token => token.user)
+    tokens!: RefreshToken[];
 
 }

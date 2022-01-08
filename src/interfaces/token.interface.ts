@@ -1,15 +1,16 @@
-
-export interface RefreshTokenInterface {
-    fingerprint: string;
-    token: string;
-    user_id: string;
-    ip?: string | null;
-}
+import User from '../entities/user';
 
 export interface TokenPayloadInterface {
     fingerprint: string;
     user_id: string;
-    ip?: string | null;
+    ip?: string;
+}
+
+export interface RefreshTokenInterface {
+    user: User;
+    token: string;
+    fingerprint: string;
+    ip?: string;
 }
 
 export interface RefreshTokenJSON {

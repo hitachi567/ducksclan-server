@@ -6,12 +6,12 @@ export interface OnlineStatus {
 
 export interface BanStatus {
     isBanned: boolean;
-    banned_at: Date | null;
+    banned_at?: Date;
 }
 
 export interface EmailConfirmStatus {
     isConfirmed: boolean;
-    confirmed_at: Date | null;
+    confirmed_at?: Date;
 }
 
 export interface UserMetadata extends OnlineStatus, BanStatus, EmailConfirmStatus { }
@@ -20,13 +20,13 @@ export interface UserInfo {
     id: string;
     email: string;
     username: string;
-    password: string | null;
-    confirm_link: string | null;
+    password?: string;
+    confirm_link?: string;
 }
 
 export interface UserProfile {
-    name: string | null;
-    bio: string | null;
+    name?: string;
+    bio?: string;
 }
 
 export interface UserInterface extends UserInfo, UserProfile, UserMetadata { }
