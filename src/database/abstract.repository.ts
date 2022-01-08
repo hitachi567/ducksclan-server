@@ -10,4 +10,16 @@ export default abstract class AbstractRepository<Entity extends ObjectLiteral> {
 
     }
 
+    save(data: Entity): Promise<Entity> {
+
+        return this.repository.save(data);
+
+    }
+
+    remove(data: Entity): Promise<Entity> {
+
+        return this.repository.remove(data);
+
+    }
+
 }
