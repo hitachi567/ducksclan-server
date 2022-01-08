@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import Database from '../database/database';
+import Database from '../database';
 import UserRepository from './user.repository';
 import RefreshTokenRepository from './refresh-token.repository';
 

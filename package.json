@@ -7,10 +7,11 @@
     "scripts": {
         "build": "webpack",
         "start": "node ./dist/index.js",
-        "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts"
+        "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+        "sync": "ts-node ./src/synchronize.ts"
     },
     "dependencies": {
-        "@hitachi567/core": "^0.0.3",
+        "@hitachi567/core": "0.0.9",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-validator": "^6.13.0",
