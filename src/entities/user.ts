@@ -70,7 +70,6 @@ export default class User extends BaseEntity implements UserInterface {
 
     confirmEmail() {
         this.isConfirmed = true;
-        this.confirm_link = undefined;
         this.confirmed_at = new Date();
     }
 
