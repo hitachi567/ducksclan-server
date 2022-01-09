@@ -22,6 +22,12 @@ export default class UserRepository extends AbstractRepository<User> {
 
     }
 
+    findOneByUsername(username: string): Promise<User | undefined> {
+
+        return this.repository.findOne({ where: { username } });
+
+    }
+
     findOneByConfirmLink(confirm_link: string): Promise<User | undefined> {
 
         return this.repository.findOne({ where: { confirm_link } });

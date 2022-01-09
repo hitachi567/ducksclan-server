@@ -27,6 +27,16 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
+    async checkUsernameUniqueness(username: string): Promise<void> {
+
+        let user = await this.userRepository.findOneByUsername(username);
+
+        if (user) {
+            throw ApiError.BadRequest('username occupied');
+        }
+
+    }
+
     async createUser(email: string): Promise<User> {
 
         let user = User.init(email);
@@ -35,7 +45,7 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
-    async changeEmail(user: User, newEmail: string): Promise<User> {
+    changeEmail(user: User, newEmail: string): Promise<User> {
 
         if (user.isConfirmed) {
 
@@ -50,6 +60,28 @@ export default class RegistrationService extends ConfirmationService {
         }
 
         user.email = newEmail;
+
+        return this.userRepository.save(user);
+
+    }
+
+    setUsername(user: User, username: string): Promise<User> {
+
+        user.username = username;
+
+        return this.userRepository.save(user);
+
+    }
+
+    setPassword(user: User, password: string) {
+
+        if (user.password !== undefined) {
+
+            throw ApiError.Forbidden('password already set');
+
+        }
+
+        user.password = password;
 
         return this.userRepository.save(user);
 
