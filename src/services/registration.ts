@@ -43,6 +43,12 @@ export default class RegistrationService extends ConfirmationService {
 
         }
 
+        if (user.email === newEmail) {
+
+            throw ApiError.Forbidden('specified same email');
+
+        }
+
         user.email = newEmail;
 
         return this.userRepository.save(user);
