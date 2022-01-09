@@ -18,4 +18,17 @@ export default class FindUserService extends Repositories {
 
     }
 
+    async findUserByConfirmLink(link: string) {
+
+        let user = await this.userRepository.findOneByConfirmLink(link);
+
+        if (!user) {
+
+            throw ApiError.Forbidden('invalid link payload');
+
+        }
+
+        return user;
+    }
+
 }

@@ -22,6 +22,12 @@ export default class UserRepository extends AbstractRepository<User> {
 
     }
 
+    findOneByConfirmLink(confirm_link: string): Promise<User | undefined> {
+
+        return this.repository.findOne({ where: { confirm_link } });
+
+    }
+
     removeByID(id: string): Promise<DeleteResult> {
 
         let condition = 'user.id = :id';
