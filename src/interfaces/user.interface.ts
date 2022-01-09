@@ -31,11 +31,6 @@ export interface UserProfile {
 
 export interface UserInterface extends UserInfo, UserProfile, UserMetadata { }
 
-export interface UserProfileJSON extends UserProfile {
-    username: string;
-    online: OnlineStatus;
-}
-
 export interface UserJSON {
     info: UserInfo;
     profile: UserProfile;

@@ -1,4 +1,4 @@
-import { RefreshTokenInterface, RefreshTokenJSON, TokenPayloadInterface } from '../interfaces/token.interface';
+import { RefreshTokenInterface, RefreshTokenJSON, TokenPayloadInterface } from '../interfaces';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import BaseEntity from '../database/a.base.entity';
 import User from './user';
