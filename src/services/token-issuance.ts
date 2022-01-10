@@ -1,33 +1,15 @@
-import { ApiError, TokensPair, JsonWebToken, SignOptionsPair } from '@hitachi567/core';
+import { ApiError, TokensPair, SignOptionsPair } from '@hitachi567/core';
 import { TokenPayloadInterface, LocalsWithUser } from '../interfaces';
 import { EntityManager } from 'typeorm';
+import { app } from '..';
 import FindUserService from './find-user';
 import RefreshToken from '../entities/refresh-token';
-
-export const jwt = new JsonWebToken<TokenPayloadInterface>(JsonWebToken.generateJwtSecrets());
 
 export default class TokenIssuanceService extends FindUserService {
 
     constructor(protected locals: LocalsWithUser, manager?: EntityManager) {
 
         super(manager);
-
-    }
-
-    static async tokenIssuance(
-        locals: LocalsWithUser,
-        manager?: EntityManager
-    ): Promise<TokensPair> {
-
-        TokenIssuanceService.checkLocals(locals);
-
-        const service = new TokenIssuanceService(locals, manager);
-
-        let pair = service.generatePair();
-
-        await service.saveRefresh(pair.refresh);
-
-        return pair;
 
     }
 
@@ -62,7 +44,7 @@ export default class TokenIssuanceService extends FindUserService {
             }
         }
 
-        return jwt.generateTokensPair(payload, signOptions);
+        return app.jwt.generateTokensPair(payload, signOptions);
 
     }
 

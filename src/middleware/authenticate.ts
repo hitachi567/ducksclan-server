@@ -1,6 +1,6 @@
 import { Middleware, ApiError, asyncMiddleware } from '@hitachi567/core';
 import { AuthorizedLocals } from '../interfaces';
-import { jwt } from '../services/token-issuance';
+import { app } from '..';
 
 export default function authenticate(): Middleware<any, AuthorizedLocals> {
     return asyncMiddleware(async (request, response, next) => {
@@ -13,7 +13,7 @@ export default function authenticate(): Middleware<any, AuthorizedLocals> {
 
         let token = authorization[1];
 
-        let { fingerprint, user_id } = jwt.verifyAccess(token);
+        let { fingerprint, user_id } = app.jwt.verifyAccess(token);
 
         if (response.locals.fingerprint !== fingerprint) {
             throw ApiError.Unauthorized();
