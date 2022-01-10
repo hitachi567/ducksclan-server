@@ -1,21 +1,8 @@
-import { Middleware, ApiError } from '@hitachi567/core';
-import { body } from 'express-validator';
+import { ApiError } from '@hitachi567/core';
 import ConfirmationService from './confirmation';
 import User from '../entities/user';
 
 export default class RegistrationService extends ConfirmationService {
-
-    static checkBodyEmailValid(): Middleware {
-
-        let middleware = body('email');
-        middleware.notEmpty().withMessage('email were expected, but not received');
-        middleware.isString().withMessage('email must be string');
-        middleware.isEmail().withMessage('email must be valid');
-        middleware.trim();
-
-        return middleware;
-
-    }
 
     async checkEmailUniqueness(email: string): Promise<void> {
 
