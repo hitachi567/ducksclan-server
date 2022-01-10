@@ -1,5 +1,4 @@
 import { asyncMiddleware, Middleware } from '@hitachi567/core';
-import { LocalsWithUser, EmailBody } from '../interfaces';
 import { Transaction } from '../database';
 import ConfirmationService from '../services/confirmation';
 import Database from '../database';
@@ -20,7 +19,7 @@ function transaction(link: string): Transaction<User> {
     }
 }
 
-export default function confirmEmail(): Middleware<EmailBody, LocalsWithUser> {
+export default function confirmEmail(): Middleware {
     return asyncMiddleware(async (request, response, next) => {
 
         let user = await Database.transaction<User>(
