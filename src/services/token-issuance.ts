@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 import FindUserService from './find-user';
 import RefreshToken from '../entities/refresh-token';
 
-const jwt = new JsonWebToken<TokenPayloadInterface>(JsonWebToken.generateJwtSecrets());
+export const jwt = new JsonWebToken<TokenPayloadInterface>(JsonWebToken.generateJwtSecrets());
 
 export default class TokenIssuanceService extends FindUserService {
 
