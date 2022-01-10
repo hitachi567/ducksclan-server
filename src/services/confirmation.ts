@@ -1,9 +1,10 @@
-import { rejectRegistrationTimout } from '../registration';
-import { day, Generator, ApiError } from '@hitachi567/core';
+import { day, Generator, ApiError, Timeout } from '@hitachi567/core';
 import Repositories from '../repositories';
 import FindUserService from './find-user';
 import LinkService from './link';
 import User from '../entities/user';
+
+export const rejectRegistrationTimout = new Timeout();
 
 export default class ConfirmationService extends FindUserService {
 

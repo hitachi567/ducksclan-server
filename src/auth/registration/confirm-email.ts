@@ -1,8 +1,8 @@
 import { asyncMiddleware, Middleware } from '@hitachi567/core';
-import { Transaction } from '../database';
-import ConfirmationService from '../services/confirmation';
-import Database from '../database';
-import User from '../entities/user';
+import { Transaction } from '../../database';
+import ConfirmationService from '../../services/confirmation';
+import Database from '../../database';
+import User from '../../entities/user';
 
 function transaction(link: string): Transaction<User> {
     return async manager => {

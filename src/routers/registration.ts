@@ -1,12 +1,9 @@
-import { Timeout } from '@hitachi567/core';
 import { Router } from 'express';
 import BodyValidationService from '../services/body.validation';
 import authenticate from '../middleware/authenticate';
-import registerEmail from './register-email';
-import changeEmail from './change-email';
-import confirmEmail from './confirm-email';
-
-export const rejectRegistrationTimout = new Timeout();
+import registerEmail from '../auth/registration/register-email';
+import changeEmail from '../auth/registration/change-email';
+import confirmEmail from '../auth/registration/confirm-email';
 
 export const EmailRegistrationRouter = Router()
     .post('/register',
