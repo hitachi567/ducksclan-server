@@ -33,7 +33,6 @@ export default class ConfirmationService extends FindUserService {
             }
 
             user.confirmEmail();
-            user.unban();
 
         } finally {
 

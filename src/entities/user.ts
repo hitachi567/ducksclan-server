@@ -75,6 +75,15 @@ export default class User extends BaseEntity implements UserInterface {
         this.confirmed_at = new Date();
     }
 
+    rejectEmailConfirmation() {
+        this.isConfirmed = false;
+        this.confirmed_at = null;
+    }
+
+    removeConfrimLink() {
+        this.confirm_link = null;
+    }
+
     ban() {
         this.isBanned = true;
         this.banned_at = new Date();
@@ -82,7 +91,7 @@ export default class User extends BaseEntity implements UserInterface {
 
     unban() {
         this.isBanned = false;
-        this.banned_at = undefined;
+        this.banned_at = null;
     }
 
     // info
@@ -96,19 +105,19 @@ export default class User extends BaseEntity implements UserInterface {
     @Column({ unique: true })
     username: string;
 
-    @Column({ nullable: true })
-    password?: string;
+    @Column({ type: 'text', nullable: true })
+    password?: string | null = null;
 
     // email confirm status
 
     @Column()
     isConfirmed: boolean = false;
 
-    @Column({ nullable: true })
-    confirmed_at?: Date;
+    @Column({ type: 'datetime', nullable: true })
+    confirmed_at?: Date | null = null;
 
     @Column({ type: 'text', nullable: true })
-    confirm_link?: string | null;
+    confirm_link?: string | null = null;
 
     // online status
 
@@ -121,18 +130,18 @@ export default class User extends BaseEntity implements UserInterface {
     // ban status
 
     @Column()
-    isBanned: boolean = true;
+    isBanned: boolean = false;
 
-    @Column({ nullable: true })
-    banned_at?: Date = new Date();
+    @Column({ type: 'datetime', nullable: true })
+    banned_at?: Date | null = null;
 
     // profile
 
-    @Column({ nullable: true })
-    name?: string;
+    @Column({ type: 'varchar', nullable: true })
+    name?: string | null = null;
 
-    @Column({ nullable: true })
-    bio?: string;
+    @Column({ type: 'text', nullable: true })
+    bio?: string | null = null;
 
     // relations
 

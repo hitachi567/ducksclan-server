@@ -16,10 +16,7 @@ export default class RefreshToken extends BaseEntity implements RefreshTokenInte
     static init(data: RefreshTokenInterface) {
 
         let entity = new RefreshToken(data.fingerprint, data.token, data.user);
-
-        if (data.ip) {
-            entity.ip = data.ip;
-        }
+        entity.ip = data.ip;
 
         return entity;
 
@@ -27,7 +24,7 @@ export default class RefreshToken extends BaseEntity implements RefreshTokenInte
 
     toJSON(): RefreshTokenJSON {
         return {
-            refresh: this.token,
+            token: this.token,
             payload: this.getPayload()
         }
     }
@@ -47,11 +44,8 @@ export default class RefreshToken extends BaseEntity implements RefreshTokenInte
     @Column({ unique: true })
     token: string;
 
-    @Column({ nullable: true })
-    ip?: string;
-
-    // @Column()
-    // user_id: string;
+    @Column({ type: 'varchar', nullable: true })
+    ip?: string | null = null;
 
     @ManyToOne(() => User, user => user.tokens, {
         eager: true,
