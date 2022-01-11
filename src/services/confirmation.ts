@@ -24,7 +24,7 @@ export default class ConfirmationService extends FindUserService {
     async confirmEmail(user: User) {
         try {
 
-            user.confirm_link = undefined;
+            user.removeConfrimLink();
 
             if (user.isConfirmed === true) {
 
@@ -51,7 +51,22 @@ export default class ConfirmationService extends FindUserService {
 
     async clearTimout(user: User) {
 
-        rejectRegistrationTimout.clearTimeout(user.id);
+        try {
+
+            rejectRegistrationTimout.clearTimeout(user.id);
+
+        } catch (error) {
+
+            let condition = error instanceof Error
+                && error.message === 'timeout not found';
+
+            if (!condition) {
+
+                throw error;
+
+            }
+
+        }
 
     }
 

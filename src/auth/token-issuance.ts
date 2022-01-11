@@ -1,4 +1,4 @@
-import { TokensPair, Middleware, asyncMiddleware } from '@hitachi567/core';
+import { TokensPair, Middleware, asyncMiddleware, day } from '@hitachi567/core';
 import { LocalsWithUser, ResponseBody } from '../interfaces';
 import { Transaction } from '../database';
 import Database from '../database/index';
@@ -35,6 +35,11 @@ export default function tokenIssuance(): Middleware<any, LocalsWithUser> {
             }
         }
 
+        response.cookie('token', pair.refresh, {
+            httpOnly: true,
+            signed: true,
+            maxAge: 30 * day('ms'),
+        });
         response.status(body.status).json(body);
 
     });

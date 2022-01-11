@@ -18,7 +18,7 @@ export default class RefreshTokenRepository extends AbstractRepository<RefreshTo
         let query = this.sql().delete().where(condition);
 
         if (user_id) {
-            query.andWhere('token.user_id = :user_id', { user_id })
+            query.andWhere('user_id = :user_id', { user_id })
         }
 
         return query.execute();
@@ -27,7 +27,7 @@ export default class RefreshTokenRepository extends AbstractRepository<RefreshTo
 
     removeByFingerprint(fingerprint: string): Promise<DeleteResult> {
 
-        let condition = 'token.fingerprint = :fingerprint';
+        let condition = 'fingerprint = :fingerprint';
 
         let query = this.sql().delete().where(condition, { fingerprint });
 

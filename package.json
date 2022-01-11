@@ -11,7 +11,7 @@
         "sync": "ts-node ./src/synchronize.ts"
     },
     "dependencies": {
-        "@hitachi567/core": "0.0.9",
+        "@hitachi567/core": "^0.0.10",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-validator": "^6.13.0",
