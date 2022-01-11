@@ -1,3 +1,4 @@
+import { BaseEntityInteraface } from './entity.intrafaces';
 
 export interface OnlineStatus {
     isOnline: boolean;
@@ -6,27 +7,27 @@ export interface OnlineStatus {
 
 export interface BanStatus {
     isBanned: boolean;
-    banned_at?: Date;
+    banned_at?: Date | null;
 }
 
 export interface EmailConfirmStatus {
     isConfirmed: boolean;
-    confirmed_at?: Date;
+    confirmed_at?: Date | null;
 }
 
 export interface UserMetadata extends OnlineStatus, BanStatus, EmailConfirmStatus { }
 
-export interface UserInfo {
+export interface UserInfo extends BaseEntityInteraface {
     id: string;
     email: string;
     username: string;
-    password?: string;
-    confirm_link?: string;
+    password?: string | null;
+    confirm_link?: string | null;
 }
 
 export interface UserProfile {
-    name?: string;
-    bio?: string;
+    name?: string | null;
+    bio?: string | null;
 }
 
 export interface UserInterface extends UserInfo, UserProfile, UserMetadata { }

@@ -47,7 +47,9 @@ export default class User extends BaseEntity implements UserInterface {
             email: this.email,
             username: this.username,
             password: this.password,
-            confirm_link: this.confirm_link
+            confirm_link: this.confirm_link,
+            created_at: this.created_at,
+            updated_at: this.updated_at
         }
     }
 
@@ -106,7 +108,7 @@ export default class User extends BaseEntity implements UserInterface {
     confirmed_at?: Date;
 
     @Column({ type: 'text', nullable: true })
-    confirm_link?: string;
+    confirm_link?: string | null;
 
     // online status
 
