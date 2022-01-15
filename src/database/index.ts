@@ -1,4 +1,5 @@
-import { Connection, createConnection, QueryRunner, DeleteResult, EntityManager } from 'typeorm';
+import { Connection, createConnection, QueryRunner } from 'typeorm';
+import { Transaction } from '../interfaces/database';
 import User from '../entities/user';
 import RefreshToken from '../entities/refresh-token';
 
@@ -36,6 +37,3 @@ export default class Database {
     }
 
 }
-
-export type Transaction<R = void> = (manager: EntityManager) => Promise<R>;
-export type RemoveFunction = (data: string) => Promise<DeleteResult>;

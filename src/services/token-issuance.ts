@@ -1,5 +1,5 @@
 import { ApiError, TokensPair, SignOptionsPair } from '@hitachi567/core';
-import { TokenPayloadInterface, LocalsWithUser } from '../interfaces';
+import { TokenPayloadInterface, LocalsWithUser, Transaction } from '../interfaces';
 import { EntityManager } from 'typeorm';
 import { app } from '..';
 import FindUserService from './find-user';
@@ -7,22 +7,41 @@ import RefreshToken from '../entities/refresh-token';
 
 export default class TokenIssuanceService extends FindUserService {
 
+    static tokenIssuance(locals: LocalsWithUser): Transaction<TokensPair> {
+        return async manager => {
+
+            const service = new TokenIssuanceService(locals, manager);
+            service.checkLocals();
+
+            let pair = service.generatePair();
+
+            await service.saveRefresh(pair.refresh);
+
+            return pair;
+
+        }
+    }
+
     constructor(protected locals: LocalsWithUser, manager?: EntityManager) {
 
         super(manager);
 
     }
 
-    static checkLocals(locals: LocalsWithUser) {
+    checkLocals() {
 
         let text = ' not found during token generation';
 
-        if (!locals.user) {
-            throw ApiError.InternalServerError('user' + text);
+        if (!this.locals.user) {
+
+            throw ApiError.InternalServerError('"user"' + text);
+
         }
 
-        if (!locals.fingerprint) {
-            throw ApiError.InternalServerError('fingerprint' + text);
+        if (!this.locals.fingerprint) {
+
+            throw ApiError.InternalServerError('"fingerprint"' + text);
+
         }
 
     }
