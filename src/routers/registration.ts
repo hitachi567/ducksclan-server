@@ -1,12 +1,9 @@
+import { authenticate, tokenIssuance, sendSucces, handleValidateResult } from '../middlewares';
 import { EmailBody, AuthorizedLocals, LocalsWithUser } from '../interfaces';
 import { asyncMiddleware, Middleware } from '@hitachi567/core';
 import { Router } from 'express';
 import BodyValidationService from '../services/body.validation';
 import RegistrationService from '../services/registration';
-import authenticate from '../middleware/authenticate';
-import tokenIssuance from '../middleware/token-issuance';
-import sendSucces from '../middleware/send-success';
-import handleValidateResult from '../middleware/handle-validate-result';
 import Database from '../database/index';
 import User from '../entities/user';
 

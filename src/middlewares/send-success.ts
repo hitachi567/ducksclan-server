@@ -1,7 +1,7 @@
 import { Middleware } from '@hitachi567/core';
 import { ResponseBody } from '../interfaces';
 
-export default function sendSucces(): Middleware {
+export function sendSucces(): Middleware {
     return (request, response) => {
 
         let body: ResponseBody<undefined> = {

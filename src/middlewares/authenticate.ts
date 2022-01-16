@@ -2,7 +2,7 @@ import { Middleware, ApiError, asyncMiddleware } from '@hitachi567/core';
 import { AuthorizedLocals } from '../interfaces';
 import { app } from '..';
 
-export default function authenticate(): Middleware<any, AuthorizedLocals> {
+export function authenticate(): Middleware<any, AuthorizedLocals> {
     return asyncMiddleware(async (request, response, next) => {
 
         let authorization = request.headers.authorization?.split(' ');

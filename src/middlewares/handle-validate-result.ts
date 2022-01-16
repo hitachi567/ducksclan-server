@@ -1,7 +1,7 @@
 import { validationResult } from 'express-validator';
 import { Middleware, ApiError } from '@hitachi567/core';
 
-export default function handleValidateResult(): Middleware {
+export function handleValidateResult(): Middleware {
     return (request, response, next) => {
 
         let result = validationResult(request);

@@ -3,7 +3,7 @@ import { LocalsWithUser, ResponseBody } from '../interfaces';
 import Database from '../database/index';
 import TokenIssuanceService from '../services/token-issuance';
 
-export default function tokenIssuance(): Middleware<any, LocalsWithUser> {
+export function tokenIssuance(): Middleware<any, LocalsWithUser> {
     return asyncMiddleware(async (request, response, next) => {
 
         let pair = await Database.transaction<TokensPair>(
