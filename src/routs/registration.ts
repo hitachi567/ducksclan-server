@@ -1,7 +1,6 @@
 import { authenticate, tokenIssuance, sendSucces, handleValidateResult } from '../middlewares';
-import { EmailBody, AuthorizedLocals, LocalsWithUser } from '../interfaces';
+import { Registration, EmailBody, AuthorizedLocals, LocalsWithUser } from '../interfaces';
 import { asyncMiddleware, Middleware } from '@hitachi567/core';
-import { Router } from 'express';
 import BodyValidationService from '../services/body.validation';
 import RegistrationService from '../services/registration';
 import Database from '../database/index';
@@ -35,7 +34,7 @@ function registerEmail(): Middleware<EmailBody, LocalsWithUser> {
     });
 }
 
-function confirmEmail(): Middleware<EmailBody, LocalsWithUser> {
+function confirmEmail(): Middleware<{}, LocalsWithUser> {
     return asyncMiddleware(async (request, response, next) => {
 
         let user = await Database.transaction<User>(
@@ -49,21 +48,22 @@ function confirmEmail(): Middleware<EmailBody, LocalsWithUser> {
     });
 }
 
-export const EmailRegistrationRouter = Router()
-    .post('/register',
+const registration: Registration = {
+    registerEmail: [
         BodyValidationService.EmailBody(),
         handleValidateResult(),
         registerEmail(),
         tokenIssuance()
-    )
-    .post('/change',
+    ],
+    changeEmail: [
         BodyValidationService.EmailBody(),
         handleValidateResult(),
         authenticate(),
         changeEmail(),
         tokenIssuance()
-    )
-    .get('/confirm/:link',
+    ],
+    confirmEmail: [
         confirmEmail(),
         sendSucces()
-    );
+    ]
+}
