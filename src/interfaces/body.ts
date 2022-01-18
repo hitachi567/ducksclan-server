@@ -11,4 +11,8 @@ export interface PasswordBody {
     password: string;
 }
 
+export interface ChangePasswordBody extends PasswordBody {
+    oldPassword: string;
+}
+
 export interface LoginBody extends UsernameBody, PasswordBody { }

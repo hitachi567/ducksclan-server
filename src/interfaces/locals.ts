@@ -10,3 +10,5 @@ export interface LocalsWithUser extends AppLocals {
 export interface AuthorizedLocals extends AppLocals {
     user_id: string;
 }
+
+export type AuthorizedLocalsWithUser = AuthorizedLocals & LocalsWithUser;

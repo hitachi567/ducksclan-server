@@ -103,26 +103,4 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
-    setUsername(user: User, username: string): Promise<User> {
-
-        user.username = username;
-
-        return this.userRepository.save(user);
-
-    }
-
-    setPassword(user: User, password: string) {
-
-        if (user.password !== undefined) {
-
-            throw ApiError.Forbidden('password already set');
-
-        }
-
-        user.password = password;
-
-        return this.userRepository.save(user);
-
-    }
-
 }
