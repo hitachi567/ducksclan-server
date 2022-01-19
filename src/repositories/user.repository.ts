@@ -2,6 +2,10 @@ import { EntityManager, DeleteResult } from 'typeorm';
 import AbstractRepository from '../database/abstract.repository';
 import User from '../entities/user';
 
+interface FindUserOptions {
+    refreshToken: boolean;
+}
+
 export default class UserRepository extends AbstractRepository<User> {
 
     constructor(manager: EntityManager) {
@@ -10,9 +14,17 @@ export default class UserRepository extends AbstractRepository<User> {
 
     }
 
-    findOneByID(id: string): Promise<User | undefined> {
+    findOneByID(id: string, options?: FindUserOptions): Promise<User | undefined> {
 
-        return this.repository.findOne({ where: { id } });
+        let relations: string[] = [];
+
+        if (options?.refreshToken) {
+
+            relations.push('tokens');
+
+        }
+
+        return this.repository.findOne({ where: { id }, relations });
 
     }
 
