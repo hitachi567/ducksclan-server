@@ -4,9 +4,11 @@ import User from '../entities/user';
 
 export default class FindUserService extends Repositories {
 
-    async findUser(user_id: string): Promise<User> {
+    protected async _findUser(user_id: string): Promise<User> {
 
-        let user = await this.userRepository.findOneByID(user_id);
+        let user = await this.userRepository.findOneByID(user_id, {
+            refreshToken: true
+        });
 
         if (!user) {
 
@@ -18,7 +20,7 @@ export default class FindUserService extends Repositories {
 
     }
 
-    async findUserByConfirmLink(link: string) {
+    protected async _findUserByConfirmLink(link: string) {
 
         let user = await this.userRepository.findOneByConfirmLink(link);
 

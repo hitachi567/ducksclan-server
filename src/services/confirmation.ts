@@ -9,7 +9,7 @@ export const rejectRegistrationTimout = new Timeout();
 export default class ConfirmationService extends FindUserService {
 
     // TODO: implement mail service 
-    async sendMail(user: User) {
+    protected async _sendMail(user: User) {
 
         let payload = Generator.sequense(50);
         let link = LinkService.confirm(payload);
@@ -21,7 +21,7 @@ export default class ConfirmationService extends FindUserService {
 
     }
 
-    async confirmEmail(user: User) {
+    protected async _confirmEmail(user: User) {
         try {
 
             user.confirm_link = undefined;
@@ -41,15 +41,15 @@ export default class ConfirmationService extends FindUserService {
         }
     }
 
-    async setTimeout(user: User) {
+    protected async _setTimeout(user: User) {
 
-        const cb = (user_id: string) => new RejectRegistration().remove(user_id)
+        const action = (user_id: string) => new RejectRegistration().remove(user_id)
 
-        rejectRegistrationTimout.setTimeout(user.id, cb, 7 * day('ms'));
+        rejectRegistrationTimout.setTimeout(user.id, action, 7 * day('ms'));
 
     }
 
-    async clearTimout(user: User) {
+    protected async _clearTimout(user: User) {
 
         rejectRegistrationTimout.clearTimeout(user.id);
 

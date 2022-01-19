@@ -16,19 +16,27 @@ import {
 } from '../interfaces';
 
 function registerUsername(): Middleware<UsernameBody, AuthorizedLocalsWithUser> {
-    return setUser(CredentialService.registerUsername);
+    return setUser((body, locals) => manager =>
+        new CredentialService(manager).registerUsername(body, locals)
+    );
 }
 
 function changeUsername(): Middleware<UsernameBody, AuthorizedLocalsWithUser> {
-    return setUser(CredentialService.changeUsername);
+    return setUser((body, locals) => manager =>
+        new CredentialService(manager).changeUsername(body, locals)
+    );
 }
 
 function registerPassword(): Middleware<PasswordBody, AuthorizedLocalsWithUser> {
-    return setUser(CredentialService.registerPassword);
+    return setUser((body, locals) => manager =>
+        new CredentialService(manager).registerPassword(body, locals)
+    );
 }
 
 function changePassword(): Middleware<ChangePasswordBody, AuthorizedLocalsWithUser> {
-    return setUser(CredentialService.changePassword);
+    return setUser((body, locals) => manager =>
+        new CredentialService(manager).changePassword(body, locals)
+    );
 }
 
 export const credential: Credential = {

@@ -7,8 +7,8 @@ import User from '../entities/user';
 export function confirmEmail(): Middleware<{}, LocalsWithUser> {
     return asyncMiddleware(async (request, response, next) => {
 
-        let user = await Database.transaction<User>(
-            RegistrationService.confirmEmail(request.params.link)
+        let user = await Database.transaction<User>(manager =>
+            new RegistrationService(manager).confirmEmail(request.params.link)
         );
 
         response.locals.user = user;

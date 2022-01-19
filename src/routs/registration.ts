@@ -17,11 +17,17 @@ import {
 } from '../middlewares';
 
 function changeEmail(): Middleware<EmailBody, AuthorizedLocalsWithUser> {
-    return setUser(RegistrationService.changeEmail);
+    return setUser(
+        (body, locals) => manager =>
+            new RegistrationService(manager).changeEmail(body, locals)
+    );
 }
 
 function registerEmail(): Middleware<EmailBody, LocalsWithUser> {
-    return setUser(RegistrationService.registerEmail);
+    return setUser(
+        body => manager =>
+            new RegistrationService(manager).registerEmail(body)
+    );
 }
 
 export const registration: Registration = {

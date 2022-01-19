@@ -2,60 +2,49 @@ import { EmailBody, AuthorizedLocals } from '../interfaces';
 import { ApiError } from '@hitachi567/core';
 import ConfirmationService from './confirmation';
 import User from '../entities/user';
-import { Transaction } from '../interfaces/database';
 
 export default class RegistrationService extends ConfirmationService {
 
-    static registerEmail(body: EmailBody): Transaction<User> {
-        return async manager => {
+    async registerEmail(body: EmailBody) {
 
-            const service = new RegistrationService(manager);
-            await service.checkEmailUniqueness(body.email);
+        await this._checkEmailUniqueness(body.email);
 
-            let user = await service.createUser(body.email);
+        let user = await this._createUser(body.email);
 
-            await service.sendMail(user);
-            await service.setTimeout(user);
+        await this._sendMail(user);
+        await this._setTimeout(user);
 
-            return user;
+        return user;
 
-        }
     }
 
-    static changeEmail(body: EmailBody, locals: AuthorizedLocals): Transaction<User> {
-        return async manager => {
+    async changeEmail(body: EmailBody, locals: AuthorizedLocals) {
 
-            const service = new RegistrationService(manager);
-            await service.checkEmailUniqueness(body.email);
+        await this._checkEmailUniqueness(body.email);
 
-            let user = await service.findUser(locals.user_id);
+        let user = await this._findUser(locals.user_id);
 
-            await service.changeEmail(user, body.email);
-            await service.sendMail(user);
-            await service.clearTimout(user);
-            await service.setTimeout(user);
+        await this._changeEmail(user, body.email);
+        await this._sendMail(user);
+        await this._clearTimout(user);
+        await this._setTimeout(user);
 
-            return user;
+        return user;
 
-        }
     }
 
-    static confirmEmail(link: string): Transaction<User> {
-        return async manager => {
+    async confirmEmail(link: string) {
 
-            const service = new ConfirmationService(manager);
+        let user = await this._findUserByConfirmLink(link);
 
-            let user = await service.findUserByConfirmLink(link);
+        await this._confirmEmail(user);
+        await this._clearTimout(user);
 
-            await service.confirmEmail(user);
-            await service.clearTimout(user);
+        return user;
 
-            return user;
-
-        }
     }
 
-    async checkEmailUniqueness(email: string): Promise<void> {
+    protected async _checkEmailUniqueness(email: string): Promise<void> {
 
         let user = await this.userRepository.findOneByEmail(email);
 
@@ -65,7 +54,7 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
-    async checkUsernameUniqueness(username: string): Promise<void> {
+    protected async _checkUsernameUniqueness(username: string): Promise<void> {
 
         let user = await this.userRepository.findOneByUsername(username);
 
@@ -75,7 +64,7 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
-    async createUser(email: string): Promise<User> {
+    protected async _createUser(email: string): Promise<User> {
 
         let user = User.init(email);
 
@@ -83,7 +72,7 @@ export default class RegistrationService extends ConfirmationService {
 
     }
 
-    changeEmail(user: User, newEmail: string): Promise<User> {
+    protected _changeEmail(user: User, newEmail: string): Promise<User> {
 
         if (user.isConfirmed) {
 
