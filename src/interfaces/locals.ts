@@ -8,6 +8,7 @@ export interface LocalsWithUser extends AppLocals {
 }
 
 export interface AuthorizedLocals extends AppLocals {
+    user: User;
     user_id: string;
 }
 

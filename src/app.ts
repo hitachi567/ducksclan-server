@@ -1,6 +1,6 @@
 import { AppOptions, initApp, JwtSecrets, taggingMiddleware, JsonWebToken } from '@hitachi567/core';
 import express from 'express';
-import { TokenPayloadInterface } from './interfaces/token.interface';
+import TokenService from './services/token.service';
 
 interface Configuration extends AppOptions {
     link: string;
@@ -11,14 +11,14 @@ interface Configuration extends AppOptions {
 export default class App {
 
     app: express.Application;
-    jwt: JsonWebToken<TokenPayloadInterface>;
+    jwt: TokenService;
     configuration: Configuration;
 
     constructor(configuration: Configuration) {
 
         this.configuration = configuration;
 
-        this.jwt = new JsonWebToken(configuration.jwtSecrets);
+        this.jwt = new TokenService(configuration.jwtSecrets);
 
         this.app = initApp(configuration);
         this.app.use(taggingMiddleware());

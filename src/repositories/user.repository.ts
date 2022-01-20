@@ -1,10 +1,7 @@
 import { EntityManager, DeleteResult } from 'typeorm';
+import { FindUserOptions } from '../interfaces';
 import AbstractRepository from '../database/abstract.repository';
 import User from '../entities/user';
-
-interface FindUserOptions {
-    refreshToken: boolean;
-}
 
 export default class UserRepository extends AbstractRepository<User> {
 

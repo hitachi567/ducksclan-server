@@ -1,4 +1,5 @@
 import { BaseEntityInteraface } from './entity.intrafaces';
+import User from '../entities/user';
 
 export interface OnlineStatus {
     isOnline: boolean;
@@ -38,4 +39,12 @@ export interface UserJSON {
     onlineStatus: OnlineStatus;
     banStatus: BanStatus;
     confirmStatus: EmailConfirmStatus;
+}
+
+export interface FindUserOptions {
+    refreshToken: boolean;
+}
+
+export interface FindUserMethods {
+    ByConfirmLink(link: string): Promise<User>
 }
