@@ -1,44 +1,66 @@
-import { EntityManager, DeleteResult } from 'typeorm';
-import AbstractRepository from '../database/abstract.repository';
+import { DeleteResult, LessThanOrEqual, FindConditions, MoreThan, EntityRepository, Repository } from 'typeorm';
 import RefreshToken from '../entities/refresh-token';
+import { day } from '@hitachi567/core';
 
-export default class RefreshTokenRepository extends AbstractRepository<RefreshToken> {
+@EntityRepository(RefreshToken)
+export default class RefreshTokenRepository extends Repository<RefreshToken> {
 
-    constructor(manager: EntityManager) {
+    findByUserID(user_id: string) {
 
-        super(manager, RefreshToken);
+        return this.find({
+            where: {
+                user: {
+                    id: user_id
+                }
+            }
+        });
+
+    }
+
+    findNotRelevant(user_id?: string): Promise<RefreshToken[]> {
+
+        let date = this.ago(30).toISOString();
+
+        let conditions: FindConditions<RefreshToken> = {
+            created_at: LessThanOrEqual(date)
+        };
+
+        if (user_id) {
+            conditions.user = {
+                id: user_id
+            }
+        }
+
+        return this.find(conditions);
 
     }
 
     removeNotRelevant(user_id?: string): Promise<DeleteResult> {
 
-        // let sql = `created_at + '30 day' <= current_timestamp`; // postgres syntax
-        let condition = `datetime(created_at, '+30 day') <= datetime('now')`; // sqlite syntax
+        let date = this.ago(30).toISOString();
 
-        let query = this.sql().delete().where(condition);
+        let conditions: FindConditions<RefreshToken> = {
+            created_at: LessThanOrEqual(date)
+        };
 
         if (user_id) {
-            query.andWhere('token.user_id = :user_id', { user_id })
+            conditions.user = {
+                id: user_id
+            }
         }
 
-        return query.execute();
+        return this.delete(conditions);
 
     }
 
     removeByFingerprint(fingerprint: string): Promise<DeleteResult> {
 
-        let condition = 'token.fingerprint = :fingerprint';
-
-        let query = this.sql().delete().where(condition, { fingerprint });
-
-        return query.execute();
+        return this.delete({ fingerprint });
 
     }
 
-    protected sql() {
-
-        return this.repository.createQueryBuilder('token');
-
+    protected ago(days: number) {
+        return new Date(Date.now() - days * day('ms'))
     }
 
 }

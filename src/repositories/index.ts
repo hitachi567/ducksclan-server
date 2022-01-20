@@ -13,9 +13,9 @@ export default abstract class Repositories {
 
     constructor(manager?: EntityManager) {
         this.manager = manager || Database.manager;
-        this.confirmLinkRepository = this.manager.getCustomRepository(ConfirmLinkRepository)
-        this.userRepository = new UserRepository(this.manager);
-        this.refreshTokenRepository = new RefreshTokenRepository(this.manager);
+        this.userRepository = this.manager.getCustomRepository(UserRepository);
+        this.refreshTokenRepository = this.manager.getCustomRepository(RefreshTokenRepository);
+        this.confirmLinkRepository = this.manager.getCustomRepository(ConfirmLinkRepository);
     }
 
 }
