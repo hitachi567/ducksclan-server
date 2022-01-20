@@ -1,8 +1,9 @@
 import { UserInterface, UserJSON, UserInfo, UserProfile } from '../interfaces';
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany, OneToOne } from 'typeorm';
 import { Generator } from '@hitachi567/core';
 import BaseEntity from '../database/a.base.entity';
 import RefreshToken from './refresh-token';
+import ConfirmLink from './confirm.link';
 
 @Entity()
 export default class User extends BaseEntity implements UserInterface {
@@ -147,5 +148,8 @@ export default class User extends BaseEntity implements UserInterface {
 
     @OneToMany(() => RefreshToken, token => token.user)
     tokens!: RefreshToken[];
+
+    @OneToOne(() => ConfirmLink, link => link.user)
+    confirmLink!: ConfirmLink;
 
 }
