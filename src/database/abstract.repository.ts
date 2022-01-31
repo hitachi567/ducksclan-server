@@ -1,14 +1,6 @@
-import { EntityManager, ObjectLiteral, Repository, EntityTarget } from 'typeorm';
+import { ObjectLiteral, AbstractRepository as AR } from 'typeorm';
 
-export default abstract class AbstractRepository<Entity extends ObjectLiteral> {
-
-    protected repository: Repository<Entity>
-
-    constructor(manager: EntityManager, entity: EntityTarget<Entity>) {
-
-        this.repository = manager.getRepository<Entity>(entity);
-
-    }
+export abstract class AbstractRepository<Entity extends ObjectLiteral> extends AR<Entity> {
 
     save(data: Entity): Promise<Entity> {
 
