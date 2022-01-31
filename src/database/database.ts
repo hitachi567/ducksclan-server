@@ -1,22 +1,30 @@
 import { Connection, createConnection, QueryRunner, EntitySchema } from 'typeorm';
 import { Transaction } from '../interfaces';
 
-export class Database {
+export default class Database {
 
-    protected connection: Connection;
+    static instance: Database;
 
-    constructor(connection: Connection) {
+    protected constructor(
+        protected connection: Connection
+    ) { }
 
-        this.connection = connection;
+    static async init(entities: EntitySchema[]) {
 
-    }
+        if (this.instance) {
 
-    protected static connect(entities: EntitySchema[]): Promise<Connection> {
-        return createConnection({
+            throw new Error('reinitialization is prohibited')
+
+        }
+
+        const connection = await createConnection({
             type: 'sqlite',
             database: './database/database.sqlite',
             entities
         });
+
+        this.instance = new Database(connection);
+
     }
 
     async synchronize(): Promise<void> {

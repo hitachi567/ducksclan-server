@@ -1,11 +1,11 @@
 import App from './app';
-import Database from './database/index';
+import Database from './database/database';
 
 export const app = new App(App.getConfiguration());
 
 main().catch(console.log);
 
 async function main() {
-    await Database.connect();
+    await Database.init([]);
     app.listen();
 }
