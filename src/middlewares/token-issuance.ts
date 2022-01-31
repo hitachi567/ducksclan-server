@@ -1,9 +1,9 @@
 import { TokensPair, Middleware, asyncMiddleware } from '@hitachi567/core';
-import { LocalsWithUser, ResponseBody } from '../interfaces';
+import { AuthorizedLocals, ResponseBody } from '../interfaces';
 import Database from '../database/index';
 import TokenIssuanceService from '../services/token-issuance';
 
-export function tokenIssuance(): Middleware<any, LocalsWithUser> {
+export function tokenIssuance(): Middleware<any, AuthorizedLocals> {
     return asyncMiddleware(async (request, response, next) => {
 
         let pair = await Database.transaction<TokensPair>(

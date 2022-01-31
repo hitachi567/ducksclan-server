@@ -12,28 +12,28 @@ import {
     UsernameBody,
     PasswordBody,
     ChangePasswordBody,
-    AuthorizedLocalsWithUser
+    AuthorizedLocals
 } from '../interfaces';
 
-function registerUsername(): Middleware<UsernameBody, AuthorizedLocalsWithUser> {
+function registerUsername(): Middleware<UsernameBody, AuthorizedLocals> {
     return setUser((body, locals) => manager =>
         new CredentialService(manager).registerUsername(body, locals)
     );
 }
 
-function changeUsername(): Middleware<UsernameBody, AuthorizedLocalsWithUser> {
+function changeUsername(): Middleware<UsernameBody, AuthorizedLocals> {
     return setUser((body, locals) => manager =>
         new CredentialService(manager).changeUsername(body, locals)
     );
 }
 
-function registerPassword(): Middleware<PasswordBody, AuthorizedLocalsWithUser> {
+function registerPassword(): Middleware<PasswordBody, AuthorizedLocals> {
     return setUser((body, locals) => manager =>
         new CredentialService(manager).registerPassword(body, locals)
     );
 }
 
-function changePassword(): Middleware<ChangePasswordBody, AuthorizedLocalsWithUser> {
+function changePassword(): Middleware<ChangePasswordBody, AuthorizedLocals> {
     return setUser((body, locals) => manager =>
         new CredentialService(manager).changePassword(body, locals)
     );

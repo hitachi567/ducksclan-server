@@ -4,8 +4,7 @@ import { Middleware } from '@hitachi567/core';
 import {
     Registration,
     EmailBody,
-    AuthorizedLocalsWithUser,
-    LocalsWithUser
+    AuthorizedLocals
 } from '../interfaces';
 import {
     authenticate,
@@ -15,15 +14,16 @@ import {
     tokenIssuance,
     sendSucces
 } from '../middlewares';
+import ChangeEmailService from '../services/changeEmail';
 
-function changeEmail(): Middleware<EmailBody, AuthorizedLocalsWithUser> {
+function changeEmail(): Middleware<EmailBody, AuthorizedLocals> {
     return setUser(
         (body, locals) => manager =>
-            new RegistrationService(manager).changeEmail(body, locals)
+            new ChangeEmailService(locals.user, manager).changeEmail(body)
     );
 }
 
-function registerEmail(): Middleware<EmailBody, LocalsWithUser> {
+function registerEmail(): Middleware<EmailBody, AuthorizedLocals> {
     return setUser(
         body => manager =>
             new RegistrationService(manager).registerEmail(body)

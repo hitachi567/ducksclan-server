@@ -1,10 +1,10 @@
 import { asyncMiddleware, Middleware } from '@hitachi567/core';
-import { LocalsWithUser } from '../interfaces';
+import { AuthorizedLocals } from '../interfaces';
 import RegistrationService from '../services/registration';
 import Database from '../database';
 import User from '../entities/user';
 
-export function confirmEmail(): Middleware<{}, LocalsWithUser> {
+export function confirmEmail(): Middleware<{}, AuthorizedLocals> {
     return asyncMiddleware(async (request, response, next) => {
 
         let user = await Database.transaction<User>(manager =>
