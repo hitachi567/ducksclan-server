@@ -6,13 +6,15 @@ import User from '../entities/user';
 
 export class UserService extends Repositories {
 
-    constructor(
-        public user: User,
-        manager: EntityManager
-    ) {
+    constructor(public user: User, manager: EntityManager) {
 
         super(manager);
 
+    }
+
+    async saveUser() {
+        this.user = await this.userRepository.save(this.user);
+        return this.user;
     }
 
     static find(): FindUserMethods;
@@ -26,13 +28,44 @@ export class UserService extends Repositories {
         }
 
         return {
-            async ByConfirmLink(link: string) {
+            byConfirmLink(link: string) {
 
                 return new FindService().findByConfirmLink(link);
 
             }
         }
 
+    }
+
+    static checkUniqueness() {
+        return {
+            ofUsername(username: string) {
+
+                return new FindService().checkUsernameUniqueness(username);
+
+            },
+            ofEmail(email: string) {
+
+                return new FindService().checkEmailUniqueness(email);
+
+            }
+        }
+    }
+
+    checkUniqueness() {
+        let manager = this.manager;
+        return {
+            ofUsername(username: string) {
+
+                return new FindService(manager).checkUsernameUniqueness(username);
+
+            },
+            ofEmail(email: string) {
+
+                return new FindService(manager).checkEmailUniqueness(email);
+
+            }
+        }
     }
 
 }
@@ -70,6 +103,30 @@ class FindService extends Repositories {
         }
 
         return user;
+
+    }
+
+    async checkEmailUniqueness(email: string): Promise<void> {
+
+        let user = await this.userRepository.findOneByEmail(email);
+
+        if (user) {
+
+            throw ApiError.BadRequest('email occupied');
+
+        }
+
+    }
+
+    async checkUsernameUniqueness(username: string): Promise<void> {
+
+        let user = await this.userRepository.findOneByUsername(username);
+
+        if (user) {
+
+            throw ApiError.BadRequest('username occupied');
+
+        }
 
     }
 

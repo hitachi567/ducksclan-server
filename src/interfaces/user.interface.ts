@@ -46,5 +46,5 @@ export interface FindUserOptions {
 }
 
 export interface FindUserMethods {
-    ByConfirmLink(link: string): Promise<User>
+    byConfirmLink(link: string): Promise<User>
 }
