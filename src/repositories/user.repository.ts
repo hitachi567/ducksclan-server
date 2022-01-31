@@ -1,4 +1,5 @@
-import { AbstractRepository, DeleteResult, EntityRepository } from 'typeorm';
+import { DeleteResult, EntityRepository } from 'typeorm';
+import { AbstractRepository } from '../database/abstract.repository';
 import { FindUserOptions } from '../interfaces';
 import User from '../entities/user';
 
@@ -40,18 +41,6 @@ export default class UserRepository extends AbstractRepository<User> {
     removeByID(id: string): Promise<DeleteResult> {
 
         return this.repository.delete({ id });
-
-    }
-
-    save(data: User): Promise<User> {
-
-        return this.repository.save(data);
-
-    }
-
-    remove(data: User): Promise<User> {
-
-        return this.repository.remove(data);
 
     }
 
