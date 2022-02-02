@@ -1,10 +1,11 @@
 import { Entity, PrimaryColumn, JoinColumn, OneToOne } from 'typeorm';
+import { IConfirmLink } from '../interfaces/user.interface';
 import { Generator } from '@hitachi567/core';
 import BaseEntity from '../database/a.base.entity';
 import User from './user';
 
 @Entity()
-export default class ConfirmLink extends BaseEntity {
+export default class ConfirmLink extends BaseEntity implements IConfirmLink {
 
     constructor(user: User) {
         super();

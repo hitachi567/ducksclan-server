@@ -1,50 +1,34 @@
-import { BaseEntityInteraface } from './entity.intrafaces';
-import User from '../entities/user';
+import { User } from '../entities';
+import { BaseEntityInteraface, SerialEntityInteraface } from './entity.intrafaces';
 
-export interface OnlineStatus {
-    isOnline: boolean;
-    online_updated_at: Date;
-}
-
-export interface BanStatus {
-    isBanned: boolean;
-    banned_at?: Date | null;
-}
-
-export interface EmailConfirmStatus {
-    isConfirmed: boolean;
-    confirmed_at?: Date | null;
-}
-
-export interface UserMetadata extends OnlineStatus, BanStatus, EmailConfirmStatus { }
-
-export interface UserInfo extends BaseEntityInteraface {
-    id: string;
+export interface IUser extends BaseEntityInteraface {
     email: string;
-    username: string;
-    password?: string | null;
-    confirm_link?: string | null;
+    username: string | null;
+    password: string | null;
+    banned_at: Date | null;
+    confirmed_at: Date | null;
 }
 
-export interface UserProfile {
-    name?: string | null;
-    bio?: string | null;
+export interface IUserProfile extends BaseEntityInteraface {
+    first_name: string | null;
+    second_name: string | null;
+    bio: string | null;
+    department: string | null;
+    position: string | null;
 }
 
-export interface UserInterface extends UserInfo, UserProfile, UserMetadata { }
-
-export interface UserJSON {
-    info: UserInfo;
-    profile: UserProfile;
-    onlineStatus: OnlineStatus;
-    banStatus: BanStatus;
-    confirmStatus: EmailConfirmStatus;
+export interface IUserOnline extends BaseEntityInteraface {
+    is_online: boolean;
+    updated_at: Date;
 }
 
-export interface FindUserOptions {
-    refreshToken: boolean;
+export interface IConfirmLink {
+    payload: string;
 }
 
-export interface FindUserMethods {
-    byConfirmLink(link: string): Promise<User>
+export interface IRefreshToken {
+    user: User;
+    token: string;
+    fingerprint: string;
+    ip?: string | null;
 }
