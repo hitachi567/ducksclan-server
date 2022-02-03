@@ -9,7 +9,7 @@ export default class Database {
         protected connection: Connection
     ) { }
 
-    static async init(entities: EntitySchema[]) {
+    static async init(entities: (string | Function | EntitySchema<any>)[]) {
 
         if (this.instance) {
 
