@@ -1,9 +1,10 @@
 import { Entity, OneToOne, JoinColumn, Column } from 'typeorm';
+import { IUserProfile } from '../interfaces';
 import SerialEntity from '../database/a.serial.entity';
 import User from './user';
 
 @Entity()
-export default class UserProfile extends SerialEntity {
+export default class UserProfile extends SerialEntity implements IUserProfile {
 
     constructor(user: User) {
         super();

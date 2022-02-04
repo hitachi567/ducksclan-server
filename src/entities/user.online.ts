@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { IUserOnline } from '../interfaces/user.interface';
+import { IUserOnline } from '../interfaces';
 import SerialEntity from '../database/a.serial.entity';
 import User from './user';
 

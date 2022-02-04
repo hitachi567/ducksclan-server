@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, Column, OneToOne, OneToMany } from 'typeorm';
 import { Generator } from '@hitachi567/core';
-import { IUser } from '../interfaces/user.interface';
+import { IUser } from '../interfaces';
 import BaseEntity from '../database/a.base.entity';
 import ConfirmLink from './confirm.link';
 import TokenRefresh from './token.refresh';

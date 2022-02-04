@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { RefreshTokenJSON, TokenPayloadInterface } from '../interfaces';
-import { IRefreshToken } from '../interfaces/user.interface';
+import { IRefreshToken } from '../interfaces';
 import BaseEntity from '../database/a.base.entity';
 import User from './user';
 
