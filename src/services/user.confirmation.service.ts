@@ -1,7 +1,7 @@
 import { day, Timeout } from '@hitachi567/core';
 import { UserService } from './user.service';
 import UserRepository from '../repositories/user.repository';
-import Database from '../database/database';
+import Database from '../database';
 
 export const rejectRegistrationTimout = new Timeout();
 

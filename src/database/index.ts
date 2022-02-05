@@ -1,38 +1,47 @@
-import { Connection, createConnection, QueryRunner } from 'typeorm';
-import { Transaction } from '../interfaces/database';
-import User from '../entities/user';
-import RefreshToken from '../entities/refresh-token';
+import { Connection, createConnection, QueryRunner, EntitySchema } from 'typeorm';
+import { Transaction } from '../interfaces';
 
 export default class Database {
-    protected static connection: Connection;
 
-    static async connect(): Promise<void> {
+    static instance: Database;
 
-        Database.connection = await createConnection({
+    protected constructor(
+        protected connection: Connection
+    ) { }
+
+    static async init(entities: (string | Function | EntitySchema<any>)[]) {
+
+        if (this.instance) {
+
+            throw new Error('reinitialization is prohibited')
+
+        }
+
+        const connection = await createConnection({
             type: 'sqlite',
             database: './database/database.sqlite',
-            entities: [User, RefreshToken]
+            entities
         });
 
-    }
-
-    static async synchronize(): Promise<void> {
-
-        await Database.connection.query('PRAGMA foreign_keys=OFF');
-        await Database.connection.synchronize();
-        await Database.connection.query('PRAGMA foreign_keys=ON');
+        this.instance = new Database(connection);
 
     }
 
-    static getQueryRunner(): QueryRunner {
+    async synchronize(): Promise<void> {
+        await this.connection.query('PRAGMA foreign_keys=OFF');
+        await this.connection.synchronize();
+        await this.connection.query('PRAGMA foreign_keys=ON');
+    }
+
+    getQueryRunner(): QueryRunner {
         return this.connection.createQueryRunner();
     }
 
-    static transaction<R>(callback: Transaction<R>): Promise<R> {
-        return this.connection.transaction<R>(callback);
+    transaction<Returned = any>(callback: Transaction<Returned>): Promise<Returned> {
+        return this.connection.transaction<Returned>(callback);
     }
 
-    static get manager() {
+    get manager() {
         return this.connection.manager;
     }
 

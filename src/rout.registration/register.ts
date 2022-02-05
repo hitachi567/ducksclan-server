@@ -2,7 +2,7 @@ import { Middleware, asyncMiddleware } from '@hitachi567/core';
 import { EmailBody, LocalsWithUser, Transaction } from '../interfaces';
 import { UserCreationService, UserConfirmationService } from '../services';
 import { User } from '../entities';
-import Database from '../database/database';
+import Database from '../database';
 
 function transaction(body: EmailBody): Transaction<User> {
     return async manager => {

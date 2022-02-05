@@ -2,7 +2,7 @@ import { Middleware, asyncMiddleware } from '@hitachi567/core';
 import { LocalsWithUser, Transaction } from '../interfaces';
 import { UserFindingService, UserConfirmationService } from '../services';
 import { User } from '../entities';
-import Database from '../database/database';
+import Database from '../database';
 
 function transaction(link: string): Transaction<User> {
     return async manager => {

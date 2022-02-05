@@ -2,7 +2,7 @@ import { Middleware, asyncMiddleware } from '@hitachi567/core';
 import { UsernameBody, AuthorizedLocals, Transaction } from '../interfaces';
 import { UserCredentialService } from '../services';
 import { User } from '../entities';
-import Database from '../database/database';
+import Database from '../database';
 
 function transaction(body: UsernameBody, locals: AuthorizedLocals): Transaction<User> {
     return async manager => {
