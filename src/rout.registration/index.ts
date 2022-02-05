@@ -4,8 +4,8 @@ import { authenticate } from '../middlewares/authenticate';
 import { tokenIssuance } from '../middlewares/token-issuance';
 import BodyValidationService from '../services/body.validation';
 import register from './register';
-import changeEmail from './changeEmail';
-import confirmEmail from './confirmEmail';
+import changeEmail from './change.email';
+import confirmEmail from './confirm.email';
 
 export const registration: Registration = {
     register: [
