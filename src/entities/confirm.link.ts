@@ -13,7 +13,7 @@ export default class ConfirmLink extends BaseEntity implements IConfirmLink {
     }
 
     @PrimaryColumn()
-    payload: string = Generator.sequense(50);
+    payload: string = Generator.sequence(50);
 
     @OneToOne(() => User, user => user.confirmLink, {
         eager: true,
@@ -22,5 +22,9 @@ export default class ConfirmLink extends BaseEntity implements IConfirmLink {
     })
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    regenerate() {
+        this.payload = Generator.sequence(50);
+    }
 
 }
