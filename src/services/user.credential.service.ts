@@ -59,6 +59,8 @@ export class UserCredentialService extends UserService {
 
         this.user = await this.manager.save(this.user);
 
+        await this.logoutEverywhere(this.user.id);
+
         return this.user;
 
     }

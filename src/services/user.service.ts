@@ -53,4 +53,10 @@ export class UserService extends Repositories {
 
     }
 
+    async logoutEverywhere(user_id: string) {
+
+        await this.reps.tokenRefresh.removeByUserID(user_id)
+
+    }
+
 }
