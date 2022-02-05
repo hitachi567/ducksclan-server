@@ -1,16 +1,20 @@
 import { Middleware } from '@hitachi567/core';
-import { EmailBody, UsernameBody, PasswordBody, ChangePasswordBody } from './body';
-import { AuthorizedLocals } from './locals';
+import { AuthorizedLocals, LocalsWithUser } from './locals';
+import {
+    EmailBody,
+    UsernameBody,
+    PasswordBody,
+    ChangePasswordBody
+} from './body';
 
 export interface Registration extends Record<string, Middleware<any, any>[]> {
-    registerEmail: Middleware<EmailBody, AuthorizedLocals>[];
+    register: Middleware<EmailBody, LocalsWithUser>[];
     changeEmail: Middleware<EmailBody, AuthorizedLocals>[];
-    confirmEmail: Middleware<{}, AuthorizedLocals>[];
+    confirmEmail: Middleware<{}, LocalsWithUser>[];
 }
 
 export interface Credential extends Record<string, Middleware<any, any>[]> {
-    registerUsername: Middleware<UsernameBody, AuthorizedLocals>[];
-    registerPassword: Middleware<PasswordBody, AuthorizedLocals>[];
-    changeUsername: Middleware<UsernameBody, AuthorizedLocals>[];
+    setUsername: Middleware<UsernameBody, AuthorizedLocals>[];
+    setPassword: Middleware<PasswordBody, AuthorizedLocals>[];
     changePassword: Middleware<ChangePasswordBody, AuthorizedLocals>[];
 }

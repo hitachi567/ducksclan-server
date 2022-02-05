@@ -12,7 +12,7 @@ export interface PasswordBody {
 }
 
 export interface ChangePasswordBody extends PasswordBody {
-    oldPassword: string;
+    old: string;
 }
 
 export interface LoginBody extends UsernameBody, PasswordBody { }
