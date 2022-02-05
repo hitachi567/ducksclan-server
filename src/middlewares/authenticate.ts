@@ -1,6 +1,6 @@
 import { Middleware, ApiError, asyncMiddleware, Request } from '@hitachi567/core';
 import { AuthorizedLocals } from '../interfaces';
-import { UserService } from '../services';
+import { UserFindingService } from '../services';
 import { app } from '..';
 
 export function authenticate(): Middleware<any, AuthorizedLocals> {
@@ -15,7 +15,9 @@ export function authenticate(): Middleware<any, AuthorizedLocals> {
 
         }
 
-        let user = await UserService.find(payload.user_id);
+        const service = new UserFindingService();
+
+        let user = await service.findOne.byID(payload.user_id);
 
         response.locals.user = user;
 
