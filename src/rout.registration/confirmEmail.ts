@@ -1,8 +1,8 @@
 import { Middleware, asyncMiddleware } from '@hitachi567/core';
-import { LocalsWithUser, Transaction } from '../../interfaces';
-import { UserFindingService, UserConfirmationService } from '../../services';
-import { User } from '../../entities';
-import Database from '../../database/database';
+import { LocalsWithUser, Transaction } from '../interfaces';
+import { UserFindingService, UserConfirmationService } from '../services';
+import { User } from '../entities';
+import Database from '../database/database';
 
 function transaction(link: string): Transaction<User> {
     return async manager => {
@@ -21,7 +21,7 @@ function transaction(link: string): Transaction<User> {
     }
 }
 
-export function confirmEmail(): Middleware<{}, LocalsWithUser> {
+export default function confirmEmail(): Middleware<{}, LocalsWithUser> {
     return asyncMiddleware(async (request, response, next) => {
 
         let user = await Database.instance.transaction(
