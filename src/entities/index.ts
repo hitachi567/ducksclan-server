@@ -8,7 +8,7 @@ export {
     User,
     UserOnline,
     UserProfile,
-    TokenRefresh as RefreshToken,
+    TokenRefresh,
     ConfirmLink
 }
 

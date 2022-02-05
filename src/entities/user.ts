@@ -31,16 +31,16 @@ export default class User extends BaseEntity implements IUser {
     // relations
 
     @OneToMany(() => TokenRefresh, token => token.user)
-    tokens!: TokenRefresh[];
+    tokens?: TokenRefresh[];
 
     @OneToOne(() => ConfirmLink, link => link.user)
-    confirmLink!: ConfirmLink;
+    confirmLink?: ConfirmLink;
 
     @OneToOne(() => UserOnline, online => online.user)
-    online!: UserOnline;
+    online?: UserOnline;
 
     @OneToOne(() => UserProfile, profile => profile.user)
-    profile!: UserProfile;
+    profile?: UserProfile;
 
     constructor(email: string) {
         super();
