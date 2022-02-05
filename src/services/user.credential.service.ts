@@ -3,9 +3,9 @@ import { UserService } from './user.service';
 import { ChangePasswordBody } from '../interfaces';
 import User from '../entities/user';
 
-export default class CredentialService extends UserService {
+export class UserCredentialService extends UserService {
 
-    async registerUsername(username: string) {
+    async setUsername(username: string) {
 
         if (this.user.username === username) {
 
@@ -23,7 +23,7 @@ export default class CredentialService extends UserService {
 
     }
 
-    async registerPassword(password: string): Promise<User> {
+    async setPassword(password: string): Promise<User> {
 
         if (this.user.password) {
 
@@ -31,7 +31,7 @@ export default class CredentialService extends UserService {
 
         }
 
-        return this.setPassword(password);
+        return this._setPassword(password);
 
     }
 
@@ -49,11 +49,11 @@ export default class CredentialService extends UserService {
 
         }
 
-        return this.setPassword(body.password);
+        return this._setPassword(body.password);
 
     }
 
-    private async setPassword(password: string): Promise<User> {
+    private async _setPassword(password: string): Promise<User> {
 
         this.user.password = await Hashing.hashing(password);
 
