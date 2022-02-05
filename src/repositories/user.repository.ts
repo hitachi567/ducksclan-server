@@ -1,7 +1,7 @@
 import { DeleteResult, EntityRepository } from 'typeorm';
 import { AbstractRepository } from '../database/abstract.repository';
 import { FindUserOptions } from '../interfaces';
-import User from '../entities/user';
+import { User } from '../entities';
 
 @EntityRepository(User)
 export default class UserRepository extends AbstractRepository<User> {
@@ -30,11 +30,12 @@ export default class UserRepository extends AbstractRepository<User> {
 
     }
 
-    findOneByConfirmLink(confirm_link: string, options?: FindUserOptions): Promise<User | undefined> {
+    findOneByConfirmLink(payload: string): Promise<User | undefined> {
 
-        let relations = this.getRelations(options);
-
-        return this.repository.findOne({ where: { confirm_link }, relations });
+        return this.repository.createQueryBuilder('user')
+            .leftJoinAndSelect('user.confirmLink', 'link')
+            .where('link.payload = :payload', { payload })
+            .getOne();
 
     }
 
@@ -48,10 +49,20 @@ export default class UserRepository extends AbstractRepository<User> {
 
         let relations: string[] = [];
 
-        if (options?.refreshToken) {
-
+        if (options?.tokenRefresh) {
             relations.push('tokens');
+        }
 
+        if (options?.confirmLink) {
+            relations.push('confirmLink');
+        }
+
+        if (options?.userOnline) {
+            relations.push('online');
+        }
+
+        if (options?.userProfile) {
+            relations.push('profile');
         }
 
         return relations;
