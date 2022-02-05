@@ -1,7 +1,7 @@
 import { JsonWebToken, ApiError } from '@hitachi567/core';
-import { TokenPayloadInterface } from '../interfaces';
+import { TokenPayloadInterface } from './interfaces';
 
-export default class TokenService extends JsonWebToken<TokenPayloadInterface> {
+export default class CustomJWT extends JsonWebToken<TokenPayloadInterface> {
 
     verifyAccess(token: string) {
         return this.checkPayload(super.verifyAccess(token));

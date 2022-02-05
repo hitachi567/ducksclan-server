@@ -1,6 +1,6 @@
-import { AppOptions, initApp, JwtSecrets, taggingMiddleware, JsonWebToken } from '@hitachi567/core';
+import { AppOptions, initApp, JwtSecrets, taggingMiddleware } from '@hitachi567/core';
 import express from 'express';
-import TokenService from './services/token.service';
+import CustomJWT from './custom.jwt';
 
 interface Configuration extends AppOptions {
     link: string;
@@ -11,14 +11,14 @@ interface Configuration extends AppOptions {
 export default class App {
 
     app: express.Application;
-    jwt: TokenService;
+    jwt: CustomJWT;
     configuration: Configuration;
 
     constructor(configuration: Configuration) {
 
         this.configuration = configuration;
 
-        this.jwt = new TokenService(configuration.jwtSecrets);
+        this.jwt = new CustomJWT(configuration.jwtSecrets);
 
         this.app = initApp(configuration);
         this.app.use(taggingMiddleware());
@@ -38,7 +38,7 @@ export default class App {
 
     static getConfiguration(): Configuration {
         return {
-            jwtSecrets: JsonWebToken.generateJwtSecrets(),
+            jwtSecrets: CustomJWT.generateJwtSecrets(),
             cookieSecret: 'secret',
             link: 'http://ducksclan.ru/',
             port: 5000,
