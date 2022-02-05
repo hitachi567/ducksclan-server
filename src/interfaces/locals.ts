@@ -3,7 +3,10 @@ import User from '../entities/user';
 
 export interface AppLocals extends LocalsWithCookies, TaggedLoclas { }
 
-export interface AuthorizedLocals extends AppLocals {
+export interface LocalsWithUser extends AppLocals {
     user: User;
+}
+
+export interface AuthorizedLocals extends LocalsWithUser {
     user_id: string;
 }
